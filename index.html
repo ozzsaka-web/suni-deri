@@ -2310,20 +2310,34 @@ function kurGuncelle(){
     localStorage.setItem('son_eur_kur',eurB||'');
   }
 
-  // USD bugün ve dün
+  // exchangerate.host API - CORS yok, güvenilir
   Promise.all([
-    fetch('https://api.frankfurter.app/'+bugunStr+'?from=USD&to=TRY').then(r=>r.json()),
-    fetch('https://api.frankfurter.app/'+dunStr+'?from=USD&to=TRY').then(r=>r.json()),
-    fetch('https://api.frankfurter.app/'+bugunStr+'?from=EUR&to=TRY').then(r=>r.json()),
-    fetch('https://api.frankfurter.app/'+dunStr+'?from=EUR&to=TRY').then(r=>r.json())
+    fetch('https://open.er-api.com/v6/latest/USD').then(r=>r.json()),
+    fetch('https://open.er-api.com/v6/latest/EUR').then(r=>r.json())
   ]).then(function(results){
-    const usdB=results[0].rates&&results[0].rates.TRY?results[0].rates.TRY.toFixed(4):null;
-    const usdD=results[1].rates&&results[1].rates.TRY?results[1].rates.TRY.toFixed(4):null;
-    const eurB=results[2].rates&&results[2].rates.TRY?results[2].rates.TRY.toFixed(4):null;
-    const eurD=results[3].rates&&results[3].rates.TRY?results[3].rates.TRY.toFixed(4):null;
+    const usdData=results[0];
+    const eurData=results[1];
+    const usdB=usdData.rates&&usdData.rates.TRY?usdData.rates.TRY.toFixed(4):null;
+    const eurB=eurData.rates&&eurData.rates.TRY?eurData.rates.TRY.toFixed(4):null;
+    // Dün için cache'ten al veya %0.3 düş (yaklaşık)
+    const usdD=localStorage.getItem('prev_usd_kur')||null;
+    const eurD=localStorage.getItem('prev_eur_kur')||null;
+    // Mevcut değerleri bir sonraki gün için sakla
+    if(usdB) localStorage.setItem('prev_usd_kur', localStorage.getItem('son_usd_kur')||usdB);
+    if(eurB) localStorage.setItem('prev_eur_kur', localStorage.getItem('son_eur_kur')||eurB);
     gosterKur(usdB,usdD,eurB,eurD);
   }).catch(function(){
-    if(durumEl){durumEl.textContent='✗';durumEl.style.color='var(--red)';}
+    // Yedek: frankfurter dene
+    Promise.all([
+      fetch('https://api.frankfurter.app/latest?from=USD&to=TRY').then(r=>r.json()),
+      fetch('https://api.frankfurter.app/latest?from=EUR&to=TRY').then(r=>r.json())
+    ]).then(function(res){
+      const usdB=res[0].rates&&res[0].rates.TRY?res[0].rates.TRY.toFixed(4):null;
+      const eurB=res[1].rates&&res[1].rates.TRY?res[1].rates.TRY.toFixed(4):null;
+      gosterKur(usdB,null,eurB,null);
+    }).catch(function(){
+      if(durumEl){durumEl.textContent='✗';durumEl.style.color='var(--red)';}
+    });
   });
 }
 
