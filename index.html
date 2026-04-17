@@ -27,12 +27,12 @@
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg0);color:var(--text);font-size:14px;line-height:1.55}
 
 /* ── Topbar ── */
-.topbar{background:var(--bg1);padding:0 20px;height:48px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--border)}
+.topbar{background:var(--bg1);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--border)}
 .topbar h1{font-size:14px;font-weight:700;letter-spacing:1px;color:var(--acc);text-transform:uppercase}
 .topbar span{font-size:11px;color:var(--text3)}
 
 /* ── Nav ── */
-.nav{background:var(--bg1);border-bottom:1px solid var(--border);padding:0 16px;display:flex;overflow-x:auto;position:sticky;top:48px;z-index:199;scrollbar-width:none}
+.nav{background:var(--bg1);border-bottom:1px solid var(--border);padding:0 16px;display:flex;overflow-x:auto;position:sticky;top:56px;z-index:199;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
 .nav button{padding:12px 14px;font-size:12px;font-weight:600;border:none;background:transparent;color:#a0a8b8;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;letter-spacing:0.3px;transition:color .15s}
 .nav button.active{color:var(--acc);border-bottom-color:var(--acc)}
@@ -215,8 +215,31 @@ tr:hover td{background:var(--bg3)}
 <body>
 
 <div class="topbar">
-  <h1>Suni Deri Takip</h1>
-  <span id="sync-durum" style="font-size:11px;margin-right:12px"></span><button class="btn btn-sm" onclick="manuelSync()" style="font-size:11px;padding:4px 10px;margin-right:8px">⟳ Güncelle</button><span id="tarih-lbl"></span>
+  <h1>SUNİ DERİ TAKİP</h1>
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap">
+    <div style="display:flex;align-items:center;gap:10px;font-family:'Courier New',monospace">
+      <div style="text-align:center;cursor:pointer;line-height:1.2" onclick="kurKopyala('USD')" title="Tıkla → kur alanına yapıştır">
+        <div style="font-size:9px;color:var(--text3);letter-spacing:0.5px">USD/TL</div>
+        <div id="kur-usd-bugun" style="font-size:12px;font-weight:700;color:var(--acc)">—</div>
+        <div id="kur-usd-dun" style="font-size:9px;color:var(--text3)">dün: —</div>
+      </div>
+      <div style="width:1px;height:28px;background:var(--border)"></div>
+      <div style="text-align:center;cursor:pointer;line-height:1.2" onclick="kurKopyala('EUR')" title="Tıkla → kur alanına yapıştır">
+        <div style="font-size:9px;color:var(--text3);letter-spacing:0.5px">EUR/TL</div>
+        <div id="kur-eur-bugun" style="font-size:12px;font-weight:700;color:var(--acc)">—</div>
+        <div id="kur-eur-dun" style="font-size:9px;color:var(--text3)">dün: —</div>
+      </div>
+      <div style="text-align:center;cursor:pointer;line-height:1.2" onclick="kurGuncelle()" title="Yenile">
+        <div style="font-size:9px;color:var(--text3);letter-spacing:0.5px">ECB</div>
+        <div id="kur-saat" style="font-size:9px;color:var(--text3)">—</div>
+        <div id="kur-durum" style="font-size:9px;color:var(--text3)">↻</div>
+      </div>
+    </div>
+    <div style="width:1px;height:28px;background:var(--border)"></div>
+    <span id="sync-durum" style="font-size:11px;color:var(--text2)"></span>
+    <button class="btn btn-sm" onclick="manuelSync()" style="font-size:11px;padding:4px 10px">⟳ Güncelle</button>
+    <span id="tarih-lbl" style="font-size:11px;color:var(--text3)"></span>
+  </div>
 </div>
 <div class="nav">
   <button class="active" onclick="goster('satis',this)">Sipariş</button>
@@ -562,29 +585,50 @@ function syncToSheets(){
   });
 }
 
-async function loadFromSheets(){
-  const durum = document.getElementById('sync-durum');
-  if(durum) { durum.textContent = '↓ Yükleniyor...'; durum.style.color='var(--acc)'; }
-  try{
-    const res = await fetch(SYNC_URL+'?t='+Date.now());
-    const json = await res.json();
-    if(json.ok && json.data){
-      D = json.data;
-      // Aynı zamanda localStorage'a da yaz
-      ['satis','uretim','teslimat','cari','gider','musteriler','urunler','stok','iadeler'].forEach(t=>{
-        if(D[t]) localStorage.setItem('sd4_'+t, JSON.stringify(D[t]));
-      });
-      if(durum){ durum.textContent='✓ Veriler güncellendi'; durum.style.color='var(--green)'; setTimeout(()=>{ if(durum) durum.textContent=''; },3000); }
-      return true;
-    } else {
-      if(durum){ durum.textContent=''; }
+function loadFromSheets(){
+  const durum=document.getElementById('sync-durum');
+  if(durum){durum.textContent='↓ Yükleniyor...';durum.style.color='var(--acc)';}
+  return fetch(SYNC_URL+'?t='+Date.now())
+    .then(function(r){return r.json();})
+    .then(function(json){
+      if(json.ok && json.data){
+        const sheetsD=json.data;
+        var localEklendi=false;
+        var tablolar=['satis','uretim','teslimat','cari','gider','stok','iadeler'];
+        tablolar.forEach(function(t){
+          if(!sheetsD[t]){sheetsD[t]=D[t]||[];return;}
+          var sheetsIds=new Set((sheetsD[t]).map(function(r){return r&&r.id;}).filter(Boolean));
+          var sadecLocal=(D[t]||[]).filter(function(r){return r&&r.id&&!sheetsIds.has(r.id);});
+          if(sadecLocal.length>0){sheetsD[t]=sheetsD[t].concat(sadecLocal);localEklendi=true;}
+        });
+        ['musteriler','urunler'].forEach(function(t){
+          if(!sheetsD[t]) sheetsD[t]=[];
+          if(t==='musteriler'){
+            sheetsD[t]=[...new Set((sheetsD[t]||[]).concat(D[t]||[]))];
+          } else {
+            var mevcut=new Set((sheetsD[t]||[]).map(function(u){return u.anahtar;}));
+            var ekle=(D[t]||[]).filter(function(u){return u.anahtar&&!mevcut.has(u.anahtar);});
+            sheetsD[t]=(sheetsD[t]||[]).concat(ekle);
+          }
+        });
+        D=sheetsD;
+        ['satis','uretim','teslimat','cari','gider','musteriler','urunler','stok','iadeler'].forEach(function(t){
+          if(D[t]) localStorage.setItem('sd4_'+t,JSON.stringify(D[t]));
+        });
+        if(localEklendi) setTimeout(syncToSheets,500);
+        if(durum){durum.textContent='✓ Güncellendi';durum.style.color='var(--green)';setTimeout(function(){if(durum)durum.textContent='';},3000);}
+        return true;
+      } else {
+        if(durum) durum.textContent='';
+        return false;
+      }
+    })
+    .catch(function(){
+      if(durum){durum.textContent='Çevrimdışı';durum.style.color='var(--text3)';}
       return false;
-    }
-  } catch(e){
-    if(durum){ durum.textContent='Çevrimdışı'; durum.style.color='var(--text3)'; }
-    return false;
-  }
+    });
 }
+
 const fmt=(n,d=2)=>parseFloat((+n||0).toFixed(d)).toLocaleString('tr-TR');
 const bugun=()=>new Date().toISOString().slice(0,10);
 const uid=p=>p+Date.now()+Math.floor(Math.random()*1000);
@@ -2189,9 +2233,10 @@ function guncTumRef(){guncUretimRef();guncTeslimatRef();guncCariRef();}
 // ============================================================
 // MANUEL SYNC
 // ============================================================
-async function manuelSync(){
-  const guncel = await loadFromSheets();
-  if(guncel){
+function manuelSync(){
+  const durum=document.getElementById('sync-durum');
+  if(durum){durum.textContent='↑ Kaydediliyor...';durum.style.color='var(--acc)';}
+  function renderHepsi(){
     renderSatisListe();renderUretimListe();renderTeslimatListe();
     guncTumRef();guncMusteriDatalist();renderFihrist();
     if(document.getElementById('page-stok').classList.contains('active')){renderStokListe();renderStokOzet();}
@@ -2199,6 +2244,87 @@ async function manuelSync(){
     if(document.getElementById('page-cari').classList.contains('active'))renderCari();
     if(document.getElementById('page-ozet').classList.contains('active'))renderOzet();
   }
+  fetch(SYNC_URL,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}})
+    .then(function(){return loadFromSheets();})
+    .then(function(guncel){if(guncel)renderHepsi();})
+    .catch(function(){loadFromSheets().then(function(guncel){if(guncel)renderHepsi();});});
+}
+
+
+// ============================================================
+// TCMB KUR VERİSİ
+// ============================================================
+function kurKopyala(doviz){
+  const deger=localStorage.getItem('son_'+doviz.toLowerCase()+'_kur');
+  if(!deger) return;
+  // Aktif kur input'larını bul ve doldur
+  const kurInputlar=document.querySelectorAll('input[id*="kur"]:not([readonly]), input[id*="-kur"]:not([readonly])');
+  let dolduruldu=false;
+  kurInputlar.forEach(inp=>{
+    const page=inp.closest('.page');
+    if(page && page.classList.contains('active')){
+      inp.value=deger;
+      inp.dispatchEvent(new Event('input'));
+      dolduruldu=true;
+    }
+  });
+  // Bildirim göster
+  const durum=document.getElementById('kur-durum');
+  if(durum){
+    durum.textContent='✓';
+    durum.style.color='var(--green)';
+    setTimeout(()=>{durum.textContent='ECB';durum.style.color='var(--green)';},1500);
+  }
+  // Panoya da kopyala
+  navigator.clipboard&&navigator.clipboard.writeText(deger);
+}
+
+function kurGuncelle(){
+  const durumEl=document.getElementById('kur-durum');
+  if(durumEl) durumEl.textContent='...';
+  
+  const bugunDate=new Date();
+  const bugunStr=bugunDate.toISOString().slice(0,10);
+  const dunDate=new Date(bugunDate);
+  dunDate.setDate(dunDate.getDate()-1);
+  if(dunDate.getDay()===0) dunDate.setDate(dunDate.getDate()-1);
+  if(dunDate.getDay()===6) dunDate.setDate(dunDate.getDate()-1);
+  const dunStr=dunDate.toISOString().slice(0,10);
+
+  function degisimOku(b,d){if(!b||!d)return'';const f=parseFloat(b)-parseFloat(d);return f>0?' ▲':f<0?' ▼':'';}
+  function degisimRenk(b,d){if(!b||!d)return'var(--acc)';const f=parseFloat(b)-parseFloat(d);return f>0?'var(--red)':f<0?'var(--green)':'var(--acc)';}
+
+  function gosterKur(usdB,usdD,eurB,eurD){
+    const usdEl=document.getElementById('kur-usd-bugun');
+    const eurEl=document.getElementById('kur-eur-bugun');
+    const usdDEl=document.getElementById('kur-usd-dun');
+    const eurDEl=document.getElementById('kur-eur-dun');
+    const saatEl=document.getElementById('kur-saat');
+    if(usdEl&&usdB){usdEl.textContent=usdB+degisimOku(usdB,usdD);usdEl.style.color=degisimRenk(usdB,usdD);}
+    if(eurEl&&eurB){eurEl.textContent=eurB+degisimOku(eurB,eurD);eurEl.style.color=degisimRenk(eurB,eurD);}
+    if(usdDEl&&usdD) usdDEl.textContent='dün: '+usdD;
+    if(eurDEl&&eurD) eurDEl.textContent='dün: '+eurD;
+    if(saatEl) saatEl.textContent=new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+    if(durumEl){durumEl.textContent='ECB';durumEl.style.color='var(--green)';}
+    localStorage.setItem('son_usd_kur',usdB||'');
+    localStorage.setItem('son_eur_kur',eurB||'');
+  }
+
+  // USD bugün ve dün
+  Promise.all([
+    fetch('https://api.frankfurter.app/'+bugunStr+'?from=USD&to=TRY').then(r=>r.json()),
+    fetch('https://api.frankfurter.app/'+dunStr+'?from=USD&to=TRY').then(r=>r.json()),
+    fetch('https://api.frankfurter.app/'+bugunStr+'?from=EUR&to=TRY').then(r=>r.json()),
+    fetch('https://api.frankfurter.app/'+dunStr+'?from=EUR&to=TRY').then(r=>r.json())
+  ]).then(function(results){
+    const usdB=results[0].rates&&results[0].rates.TRY?results[0].rates.TRY.toFixed(4):null;
+    const usdD=results[1].rates&&results[1].rates.TRY?results[1].rates.TRY.toFixed(4):null;
+    const eurB=results[2].rates&&results[2].rates.TRY?results[2].rates.TRY.toFixed(4):null;
+    const eurD=results[3].rates&&results[3].rates.TRY?results[3].rates.TRY.toFixed(4):null;
+    gosterKur(usdB,usdD,eurB,eurD);
+  }).catch(function(){
+    if(durumEl){durumEl.textContent='✗';durumEl.style.color='var(--red)';}
+  });
 }
 
 // ============================================================
@@ -2208,15 +2334,29 @@ urunSatirEkle();
 stokSatirEkle();
 renderSatisListe();renderUretimListe();renderTeslimatListe();
 guncTumRef();guncMusteriDatalist();renderFihrist();
-// Sayfa açılınca Sheets'ten son veriyi çek
-loadFromSheets().then(guncel=>{
-  if(guncel){
-    renderSatisListe();renderUretimListe();renderTeslimatListe();
-    guncTumRef();guncMusteriDatalist();renderFihrist();
-  }
-});
-// Her 60 saniyede bir otomatik güncelle
-setInterval(()=>{ loadFromSheets().then(g=>{ if(g){ renderSatisListe();renderUretimListe();renderTeslimatListe();guncTumRef(); }}); }, 60000);
+
+// Sayfa açılınca sync ve kur
+function baslat(){
+  // Önce local'i Sheets'e gönder, sonra birleştirilmiş veriyi çek
+  fetch(SYNC_URL,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}})
+    .then(()=>loadFromSheets())
+    .then(guncel=>{
+      if(guncel){
+        renderSatisListe();renderUretimListe();renderTeslimatListe();
+        guncTumRef();guncMusteriDatalist();renderFihrist();
+      }
+    })
+    .catch(()=>loadFromSheets());
+  
+  // Her 60 saniyede bir otomatik güncelle
+  setInterval(()=>{ loadFromSheets().then(g=>{ if(g){ renderSatisListe();renderUretimListe();renderTeslimatListe();guncTumRef(); }}); }, 60000);
+
+  // Kur verilerini çek
+  kurGuncelle();
+  // Her 30 dakikada bir güncelle
+  setInterval(kurGuncelle, 30*60*1000);
+}
+baslat();
 
 // Tüm text input'lara büyük harf zorla
 document.addEventListener('input', function(e){
