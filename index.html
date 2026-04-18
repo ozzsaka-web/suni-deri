@@ -1146,15 +1146,27 @@ function renderUretimListe(){
           </div>`;
         }).join('')}
       </div>`:'';
+    // Eksik üretim hesapla
+    const eksikler=r.urunler.filter(u=>(u.uretimMiktar||0)<(u.sipMiktar||0));
+    const topEksik=eksikler.reduce((a,u)=>a+((u.sipMiktar||0)-(u.uretimMiktar||0)),0);
+    const eksikRozet=eksikler.length?`<span style="background:#2a0f0f;color:var(--red);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u26a0 ${fmt(topEksik)} m eksik</span>`:'';
+    const tamRozet=!eksikler.length&&!fazlalar.length?`<span style="background:#052e16;color:var(--green);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u2713 Tam</span>`:'';
     return `<div class="sip-kart">
-      <div class="sip-kart-head">
-        <div>
-          <div style="font-size:13px;font-weight:700">${r.musteri} — <span class="badge b-teslim">${r.fabrika}</span></div>
-          <div style="font-size:11px;color:var(--text2)">${r.zaman}</div>
+      <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:13px;font-weight:800;color:var(--acc)">${r.musteri}</span>
+            <span class="badge b-teslim">${r.fabrika}</span>
+            ${eksikRozet}${tamRozet}
+          </div>
+          <div style="font-size:11px;color:var(--text2);margin-top:3px">
+            ${r.urunler.length} \u00fcr\u00fcn &nbsp;\u00b7&nbsp; Bor\u00e7: <strong style="color:var(--red)">\u20ba${fmt(r.topTL||0)}</strong> &nbsp;\u00b7&nbsp; ${r.zaman}
+          </div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-xs" onclick="editUretim('${r.id}')">Düzenle</button>
+        <div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">
+          <button class="btn btn-xs" onclick="editUretim('${r.id}')">D\u00fczenle</button>
           <button class="btn btn-red btn-xs" onclick="silUretim('${r.id}')">Sil</button>
+          <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">\u25be</span>
         </div>
       </div>
       <div class="sip-kart-body">
