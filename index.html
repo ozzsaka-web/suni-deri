@@ -339,7 +339,7 @@ tr:hover td{background:var(--bg3)}
       <div class="fg"><label class="lbl">Durum</label><select id="t-durum"><option>Teslim Edildi</option><option>Kısmi Teslimat</option><option>Beklemede</option></select></div>
     </div>
     <!-- Teslim ürün detay + kur -->
-    <div id="t-urun-detay" style="display:none">
+    <div id="t-urun-detay" style="display:none"><div id="t-ozet" style="display:none"></div>
       <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px">Ürün Bazında Teslim Miktarı + Üretim Maliyeti Kurları</div>
       <div id="t-urun-satirlar"></div>
     </div>
@@ -931,7 +931,17 @@ function kaydetEditSatis(id,urunSayisi){
     s.urunler.push({urun,renkKod,miktar,birim,topDov:td});
   }
   s.topDov=+topDov.toFixed(2);
-  kaydet('satis');renderSatisListe();editModalKapat();
+  // Bağlı teslimat kayıtlarının sipTarih ve gün farkını güncelle
+  D.teslimat.filter(t=>t.satisRef===id).forEach(t=>{
+    t.sipTarih=s.tarih;
+    t.musteri=s.musteri;
+    if(t.teslimTarih) t.gun=Math.round((new Date(t.teslimTarih)-new Date(s.tarih))/864e5);
+  });
+  // Bağlı üretim musteri adını güncelle
+  const ur=D.uretim.find(u=>u.satisRef===id);
+  if(ur) ur.musteri=s.musteri;
+  ['satis','uretim','teslimat'].forEach(kaydet);
+  renderSatisListe();renderUretimListe();renderTeslimatListe();editModalKapat();
 }
 
 // ============================================================
@@ -1203,8 +1213,8 @@ function editUretim(id){
   const body=document.getElementById('edit-modal-body');
   body.innerHTML=`
     <div class="fg" style="margin-bottom:10px"><label class="lbl">Fabrika Adı</label><input type="text" id="eu-fab" value="${r.fabrika}"></div>
-    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:8px">Ürün Detayları</div>
-    ${r.urunler.map((u,i)=>`<div style="padding:8px;background:var(--bg1);border-radius:7px;margin-bottom:6px">
+    <div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;margin-bottom:8px">Ürün Detayları</div>
+    ${r.urunler.map((u,i)=>`<div style="padding:8px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:7px;margin-bottom:6px">
       <div style="font-size:12px;font-weight:600;margin-bottom:6px">${u.urun} ${u.renkKod?'/ '+u.renkKod:''}</div>
       <div class="grid g3" style="gap:8px">
         <div class="fg"><label class="lbl">Üretim(m)</label><input type="number" id="eu-m${i}" value="${u.uretimMiktar}" step="0.01"></div>
@@ -1258,11 +1268,44 @@ function temUretim(){
 // ============================================================
 // TESLİMAT
 // ============================================================
+function siparisDurum_preview(satisId, yeniUrunler){
+  // Yeni teslim eklendikten sonraki tamamlanma yüzdesi
+  const s=D.satis.find(x=>x.id===satisId);
+  if(!s) return 0;
+  const topSiparis=s.urunler.reduce((a,u)=>a+u.miktar,0);
+  const mevcutTeslim=D.teslimat.filter(t=>t.satisRef===satisId)
+    .reduce((a,t)=>a+t.urunler.reduce((b,u)=>b+(u.teslimMiktar||0),0),0);
+  const yeniTeslim=yeniUrunler.reduce((a,u)=>a+(u.teslimMiktar||0),0);
+  return topSiparis>0?Math.round((mevcutTeslim+yeniTeslim)/topSiparis*100):0;
+}
+
+function siparisDurum(satisId){
+  // Siparişin teslim durumunu hesapla
+  const s=D.satis.find(x=>x.id===satisId);
+  if(!s) return {durum:'Beklemede',topTeslim:0,topSiparis:0,yuzde:0};
+  const teslimler=D.teslimat.filter(t=>t.satisRef===satisId);
+  // Toplam sipariş miktarı
+  const topSiparis=s.urunler.reduce((a,u)=>a+u.miktar,0);
+  // Toplam teslim edilen
+  const topTeslim=teslimler.reduce((a,t)=>
+    a+t.urunler.reduce((b,u)=>b+(u.teslimMiktar||0),0),0);
+  const yuzde=topSiparis>0?Math.round(topTeslim/topSiparis*100):0;
+  let durum='Beklemede';
+  if(topTeslim>=topSiparis&&topSiparis>0) durum='Tamamlandı';
+  else if(topTeslim>0) durum='Devam Ediyor';
+  return {durum,topTeslim,topSiparis,yuzde,teslimSayisi:teslimler.length};
+}
+
 function guncTeslimatRef(){
   const sel=document.getElementById('t-sref');
   const cur=sel.value;
   sel.innerHTML='<option value="">-- Sipariş seç --</option>'+
-    D.satis.map(s=>`<option value="${s.id}">${s.tarih} | ${s.musteri}</option>`).join('');
+    D.satis.map(s=>{
+      const ds=siparisDurum(s.id);
+      const icon=ds.durum==='Tamamlandı'?'✓ ':ds.durum==='Devam Ediyor'?'◑ ':'○ ';
+      const bilgi=ds.durum==='Beklemede'?'':` [${ds.yuzde}% teslim]`;
+      return `<option value="${s.id}">${icon}${s.tarih} | ${s.musteri}${bilgi}</option>`;
+    }).join('');
   if(cur)sel.value=cur;
 }
 
@@ -1277,27 +1320,53 @@ function teslimatDoldur(){
   }
   document.getElementById('t-musteri').value=s.musteri;
   document.getElementById('t-starih').value=s.tarih;
-  // Üretim bilgisi
+  const ds=siparisDurum(id);
   const satirlar=document.getElementById('t-urun-satirlar');
   satirlar.innerHTML=s.urunler.map((u,i)=>{
-    return `<div style="padding:10px;background:var(--bg1);border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
-      <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--text)">${u.urun} ${u.renkKod?'/ '+u.renkKod:''} — Sipariş: ${fmt(u.miktar)} m</div>
-      <div class="grid g4" style="gap:8px">
-        <div class="fg"><label class="lbl">Teslim Miktarı (m)</label>
-          <input type="number" id="tu-miktar-${i}" value="${u.miktar}" step="0.01" oninput="hTeslimat()">
+    const oncekiTeslim=D.teslimat.filter(t=>t.satisRef===id)
+      .reduce((a,t)=>a+(t.urunler[i]?t.urunler[i].teslimMiktar||0:0),0);
+    const kalan=+(u.miktar-oncekiTeslim).toFixed(2);
+    const tamam=kalan<=0;
+    return `<div style="padding:10px;background:${tamam?'#0d2215':'var(--bg1)'};border:1px solid ${tamam?'var(--green)':'var(--border)'};border-radius:8px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <div style="font-size:12px;font-weight:700;color:var(--text)">${u.urun} ${u.renkKod?'/ '+u.renkKod:''}</div>
+        <div style="font-size:11px;color:var(--text2)">
+          Sipariş: <strong>${fmt(u.miktar)} m</strong> &nbsp;·&nbsp;
+          Teslim Edilen: <strong style="color:var(--green)">${fmt(oncekiTeslim)} m</strong> &nbsp;·&nbsp;
+          Kalan: <strong style="color:${tamam?'var(--green)':'var(--acc)'}">${tamam?'✓ Tamam':fmt(kalan)+' m'}</strong>
         </div>
-        <div class="fg"><label class="lbl">Satış Birim Fiyatı <span style="background:#052e16;color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px">Satıştan</span></label>
+      </div>
+      <div class="grid g4" style="gap:8px">
+        <div class="fg"><label class="lbl">Bu Teslimat (m)</label>
+          <input type="number" id="tu-miktar-${i}" value="${tamam?0:kalan}" step="0.01" oninput="hTeslimat()">
+        </div>
+        <div class="fg"><label class="lbl">Satış Birim <span style="background:#052e16;color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px">Satıştan</span></label>
           <input class="auto" readonly value="${fmt(u.birim,4)} ${s.dovTur}">
         </div>
-        <div class="fg"><label class="lbl">Kur (₺/${s.dovTur}) — Teslim Günü</label>
+        <div class="fg"><label class="lbl">Kur (₺/${s.dovTur})</label>
           <input type="number" id="tu-kur-${i}" placeholder="Bugünün kuru" step="0.01" oninput="hTeslimat()">
         </div>
-        <div class="fg"><label class="lbl">Müşteri Alacağı TL <span style="background:#1a3a1a;color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px">Hesaplanan</span></label>
+        <div class="fg"><label class="lbl">Alacak TL <span style="background:#1a3a1a;color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px">Hesaplanan</span></label>
           <input class="auto" readonly id="tu-tl-${i}" placeholder="Otomatik">
         </div>
       </div>
     </div>`;
   }).join('');
+  // Özet bilgi
+  const durumRenk=ds.durum==='Tamamlandı'?'var(--green)':ds.durum==='Devam Ediyor'?'var(--acc)':'var(--text3)';
+  let ozet=document.getElementById('t-ozet');
+  if(!ozet){
+    ozet=document.createElement('div');
+    ozet.id='t-ozet';
+    ozet.style='margin-bottom:10px;padding:8px 12px;background:var(--bg1);border:1px solid var(--border);border-radius:8px;font-size:12px;display:flex;gap:16px;flex-wrap:wrap';
+    const detay=document.getElementById('t-urun-satirlar');
+    detay.parentNode.insertBefore(ozet,detay);
+  }
+  ozet.innerHTML=`<span>Durum: <strong style="color:${durumRenk}">${ds.durum}</strong></span>
+    <span>Toplam: <strong>${fmt(ds.topSiparis)} m</strong></span>
+    <span>Teslim Edilen: <strong style="color:var(--green)">${fmt(ds.topTeslim)} m</strong></span>
+    <span>Teslimat: <strong>${ds.teslimSayisi}</strong></span>
+    <span>Tamamlanma: <strong style="color:${durumRenk}">${ds.yuzde}%</strong></span>`;
   document.getElementById('t-urun-detay').style.display='block';
   hTeslimat();
 }
@@ -1334,55 +1403,97 @@ function ekTeslimat(){
       satisbirim:u.birim,kur,alacakTL};
   });
   const topAlacakTL=urunler.reduce((a,u)=>a+u.alacakTL,0);
+  // Durum otomatik hesapla
+  const ds_sonra=siparisDurum_preview(refId, urunler);
+  const otoDurum=ds_sonra>=100?'Tamamlandı':ds_sonra>0?'Kısmi Teslimat':'Beklemede';
   D.teslimat.push({
     id:uid('T'),satisRef:refId,musteri:s.musteri,
     sipTarih:s.tarih,teslimTarih:tTarih,gun,
     dovTur:s.dovTur,urunler,topAlacakTL:+topAlacakTL.toFixed(2),
-    durum:document.getElementById('t-durum').value,
+    durum:otoDurum,
     zaman:new Date().toLocaleString('tr-TR')
   });
-  kaydet('teslimat');renderTeslimatListe();temTeslimat();
+  kaydet('teslimat');renderTeslimatListe();guncTeslimatRef();temTeslimat();
 }
 
 function renderTeslimatListe(){
   const el=document.getElementById('teslimat-liste');
   if(!D.teslimat.length){el.innerHTML='<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px">Henüz satış/teslim kaydı yok</div>';return}
-  el.innerHTML=D.teslimat.map((r,i)=>{
-    const dc={Beklemede:'b-bekl','Teslim Edildi':'b-teslim','Kısmi Teslimat':'b-kismi'}[r.durum]||'b-bekl';
-    const topAlacak=r.topAlacakTL!=null?r.topAlacakTL:(r.urunler||[]).reduce((a,u)=>a+(u.alacakTL||u.topBorc||0),0);
-    const gc=r.gun===null?'-':r.gun<=7?`<span style="background:#D1FAE5;color:var(--green);padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700">${r.gun}g</span>`:
-      r.gun<=30?`<span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700">${r.gun}g</span>`:
-      `<span style="background:#FEE2E2;color:var(--red);padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700">${r.gun}g</span>`;
-    return`<div class="sip-kart">
-      <div class="sip-kart-head">
-        <div>
-          <div style="font-size:13px;font-weight:700">${r.musteri} — ${r.sipTarih} → ${r.teslimTarih} ${gc}</div>
-          <div style="display:flex;gap:8px;align-items:center;margin-top:4px"><span class="badge ${dc}">${r.durum}</span>
-            <span style="font-size:11px;color:var(--text3)">Toplam Borç TL: <strong style="color:var(--red)">₺${fmt(r.topBorc)}</strong></span></div>
+  
+  // Sipariş bazında grupla
+  const gruplar={};
+  D.teslimat.forEach(t=>{
+    if(!gruplar[t.satisRef]) gruplar[t.satisRef]=[];
+    gruplar[t.satisRef].push(t);
+  });
+  
+  el.innerHTML=Object.entries(gruplar).map(([satisRef,teslimler])=>{
+    const s=D.satis.find(x=>x.id===satisRef);
+    const ds=siparisDurum(satisRef);
+    const durumCl=ds.durum==='Tamamlandı'?'b-teslim':ds.durum==='Devam Ediyor'?'b-kismi':'b-bekl';
+    const durumRenk=ds.durum==='Tamamlandı'?'var(--green)':ds.durum==='Devam Ediyor'?'var(--acc)':'var(--text3)';
+    const topAlacak=teslimler.reduce((a,t)=>a+(t.topAlacakTL!=null?t.topAlacakTL:(t.urunler||[]).reduce((b,u)=>b+(u.alacakTL||u.topBorc||0),0)),0);
+    
+    return `<div class="sip-kart" style="margin-bottom:14px">
+      <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:13px;font-weight:800;color:var(--acc)">${s?s.musteri:teslimler[0].musteri}</span>
+            <span class="badge ${durumCl}">${ds.durum}</span>
+            <span style="font-size:11px;color:var(--text2)">${ds.yuzde}% tamamlandı · ${ds.teslimSayisi} teslimat</span>
+          </div>
+          <div style="font-size:11px;color:var(--text2);margin-top:3px">
+            Sipariş: ${fmt(ds.topSiparis)} m &nbsp;·&nbsp;
+            Teslim: <strong style="color:var(--green)">${fmt(ds.topTeslim)} m</strong> &nbsp;·&nbsp;
+            Alacak: <strong style="color:var(--green)">₺${fmt(topAlacak)}</strong>
+          </div>
         </div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          <button class="btn btn-xs" onclick="editTeslimat('${r.id}')">Düzenle</button>
-          <button class="btn btn-red btn-xs" onclick="silTeslimat('${r.id}')">Sil</button>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">▾</span>
         </div>
       </div>
       <div class="sip-kart-body">
-        <div class="tbl-wrap">
-          <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Sipariş(m)</th><th>Teslim(m)</th><th>Fark(m)</th><th>Satış Birim</th><th>Kur</th><th>Müşteri Alacağı TL</th></tr></thead>
-          <tbody>${r.urunler.map(u=>{
-            const birim=u.satisbirim||u.alisbirim||0;
-            const alacak=u.alacakTL||u.topBorc||0;
-            const farkRenk=u.fark>=0?'var(--green)':'var(--red)';
-            return `<tr>
-              <td>${u.urun}</td><td>${u.renkKod||'-'}</td>
-              <td>${fmt(u.sipMiktar)}</td>
-              <td style="font-weight:700">${fmt(u.teslimMiktar)}</td>
-              <td style="font-weight:700;color:${farkRenk}">${u.fark>=0?'+':''}${fmt(u.fark)}</td>
-              <td style="color:var(--acc);font-weight:700">${fmt(birim,4)} ${r.dovTur}</td>
-              <td style="color:var(--text2)">${fmt(u.kur||0)} ₺</td>
-              <td style="font-weight:800;color:var(--green)">₺${fmt(alacak)}</td>
-            </tr>`;
-          }).join('')}</tbody></table>
-        </div>
+        ${teslimler.map((r,ti)=>{
+          const dc={Beklemede:'b-bekl','Teslim Edildi':'b-teslim','Kısmi Teslimat':'b-kismi','Tamamlandı':'b-teslim'}[r.durum]||'b-bekl';
+          const topAl=r.topAlacakTL!=null?r.topAlacakTL:(r.urunler||[]).reduce((a,u)=>a+(u.alacakTL||u.topBorc||0),0);
+          const gc=r.gun===null?'':r.gun<=7?`<span style="background:#052e16;color:var(--green);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
+            r.gun<=30?`<span style="background:#2a1800;color:var(--acc);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
+            `<span style="background:#2a0f0f;color:var(--red);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`;
+          return `<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden">
+            <div style="padding:8px 12px;background:var(--bg1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+                <span style="font-weight:700;color:var(--text2)">${ti+1}. Teslimat</span>
+                <span style="color:var(--text3)">${r.teslimTarih}</span>
+                ${gc}
+                <span class="badge ${dc}">${r.durum}</span>
+              </div>
+              <div style="display:flex;gap:6px">
+                <span style="font-size:12px;font-weight:700;color:var(--green)">₺${fmt(topAl)}</span>
+                <button class="btn btn-xs" onclick="editTeslimat('${r.id}')">Düzenle</button>
+                <button class="btn btn-red btn-xs" onclick="silTeslimat('${r.id}')">Sil</button>
+              </div>
+            </div>
+            <div style="padding:10px 12px">
+              <div class="tbl-wrap">
+                <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Teslim(m)</th><th>Satış Birim</th><th>Kur</th><th>Alacak TL</th></tr></thead>
+                <tbody>${r.urunler.map(u=>{
+                  const birim=u.satisbirim||u.alisbirim||0;
+                  const alacak=u.alacakTL||u.topBorc||0;
+                  return `<tr>
+                    <td>${u.urun}</td><td>${u.renkKod||'-'}</td>
+                    <td style="font-weight:700">${fmt(u.teslimMiktar)} m</td>
+                    <td style="color:var(--acc)">${fmt(birim,4)} ${r.dovTur}</td>
+                    <td style="color:var(--text2)">${fmt(u.kur||0)} ₺</td>
+                    <td style="font-weight:800;color:var(--green)">₺${fmt(alacak)}</td>
+                  </tr>`;
+                }).join('')}</tbody></table>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+        ${ds.durum!=='Tamamlandı'?`<div style="padding:8px;background:#0a1a00;border:1px dashed var(--green);border-radius:8px;text-align:center;font-size:12px;color:var(--green)">
+          Kalan: <strong>${fmt(ds.topSiparis-ds.topTeslim)} m</strong> — Satış/Teslim sekmesinden yeni teslimat girebilirsin
+        </div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -1397,7 +1508,7 @@ function editTeslimat(id){
       <div class="fg"><label class="lbl">Teslim Tarihi</label><input type="date" id="et-tarih" value="${r.teslimTarih}"></div>
       <div class="fg"><label class="lbl">Durum</label><select id="et-durum">${['Teslim Edildi','Kısmi Teslimat','Beklemede'].map(d=>`<option${r.durum===d?' selected':''}>${d}</option>`).join('')}</select></div>
     </div>
-    ${r.urunler.map((u,i)=>`<div style="padding:8px;background:var(--bg1);border-radius:7px;margin-bottom:6px">
+    ${r.urunler.map((u,i)=>`<div style="padding:8px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:7px;margin-bottom:6px">
       <div style="font-size:12px;font-weight:600;margin-bottom:6px">${u.urun} ${u.renkKod?'/ '+u.renkKod:''}</div>
       <div class="grid g3" style="gap:8px">
         <div class="fg"><label class="lbl">Teslim(m)</label><input type="number" id="et-m${i}" value="${u.teslimMiktar}" step="0.01"></div>
@@ -1823,9 +1934,9 @@ function renderKar(){
       <div class="mc"><div class="mc-val g">₺${fmt(topSatis)}</div><div class="mc-lbl">Toplam Satış/Teslim</div></div>
       <div class="mc"><div class="mc-val r">₺${fmt(topBorc)}</div><div class="mc-lbl">Toplam Maliyet</div></div>
       <div class="mc"><div class="mc-val b">₺${fmt(brutKar)}</div><div class="mc-lbl">Brüt Kâr</div></div>
-      <div class="mc"><div class="mc-val g">₺${fmt(benimPay)}</div><div class="mc-lbl">Benim Payım (%50)</div></div>
+      <div class="mc"><div class="mc-val" style="color:${benimPay>=0?'var(--green)':'var(--red)'}">₺${fmt(benimPay)}</div><div class="mc-lbl">Benim Payım (%50)</div></div>
       <div class="mc"><div class="mc-val r">₺${fmt(benimGider)}</div><div class="mc-lbl">Gider Payım (%50)</div></div>
-      <div class="mc" class="mc featured" style=""><div class="mc-val" style="color:${net>=0?'#4ade80':'#f87171'}">₺${fmt(net)}</div><div class="mc-lbl">Net Alacağım</div></div>
+      <div class="mc" style="border-color:${net>=0?'var(--green)':'var(--red)'}"><div class="mc-val" style="color:${net>=0?'var(--green)':'var(--red)'}">₺${fmt(net)}</div><div class="mc-lbl">Net Alacağım</div></div>
     </div>
     <div style="margin-bottom:12px">
       <div class="sh"><h3>Sipariş Bazında Kâr</h3></div>
@@ -2186,7 +2297,7 @@ function expCSV(tip){
     D.teslimat.forEach(r=>r.urunler.forEach(u=>rows.push({
       musteri:r.musteri,sipTarih:r.sipTarih,teslimTarih:r.teslimTarih,gun:r.gun,durum:r.durum,
       urun:u.urun,renkKod:u.renkKod,sipM:u.sipMiktar,teslimM:u.teslimMiktar,fark:u.fark,
-      alisB:u.alisbirim,kur:u.kur,topBorc:u.topBorc,dovTur:r.dovTur
+      alisB:u.satisbirim||u.alisbirim||0,kur:u.kur,topAlacak:u.alacakTL||u.topBorc||0,dovTur:r.dovTur
     })));
     dl(toCSV(rows,['Musteri','SipTarih','TeslimTarih','Sure_gun','Durum','Urun','RenkKod','SipMiktar','TeslimMiktar','Fark','AlisBirim','Kur','ToplamBorcTL','DovizTur'],
       ['musteri','sipTarih','teslimTarih','gun','durum','urun','renkKod','sipM','teslimM','fark','alisB','kur','topBorc','dovTur']),`teslimat_${d}.csv`);
