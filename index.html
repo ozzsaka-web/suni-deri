@@ -2497,10 +2497,7 @@ function baslat(){
     if(guncel) renderHepsini();
   });
 
-  // Her 10 saniyede bir otomatik güncelle
-  setInterval(()=>{
-    loadFromSheets().then(g=>{ if(g) renderHepsini(); });
-  }, 10000);
+  // Otomatik güncelleme kapalı - sadece manuel Güncelle butonu
 
   // Kur verilerini çek
   kurGuncelle();
