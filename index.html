@@ -565,7 +565,8 @@ function syncToSheets(){
   fetch(SYNC_URL, {
     method: 'POST',
     body: JSON.stringify(D),
-    headers: {'Content-Type': 'text/plain'}
+    cache: 'no-store',
+    headers: {'Content-Type': 'text/plain', 'Cache-Control': 'no-cache'}
   })
   .then(r=>r.json())
   .then(res=>{
@@ -588,34 +589,18 @@ function syncToSheets(){
 function loadFromSheets(){
   const durum=document.getElementById('sync-durum');
   if(durum){durum.textContent='↓ Yükleniyor...';durum.style.color='var(--acc)';}
-  return fetch(SYNC_URL+'?t='+Date.now())
+  var url=SYNC_URL+'?t='+Date.now()+'&r='+Math.random().toString(36).slice(2);
+  return fetch(url,{method:'GET',cache:'no-store',headers:{'Cache-Control':'no-cache, no-store, must-revalidate','Pragma':'no-cache'}})
     .then(function(r){return r.json();})
     .then(function(json){
       if(json.ok && json.data){
-        const sheetsD=json.data;
-        var localEklendi=false;
-        var tablolar=['satis','uretim','teslimat','cari','gider','stok','iadeler'];
-        tablolar.forEach(function(t){
-          if(!sheetsD[t]){sheetsD[t]=D[t]||[];return;}
-          var sheetsIds=new Set((sheetsD[t]).map(function(r){return r&&r.id;}).filter(Boolean));
-          var sadecLocal=(D[t]||[]).filter(function(r){return r&&r.id&&!sheetsIds.has(r.id);});
-          if(sadecLocal.length>0){sheetsD[t]=sheetsD[t].concat(sadecLocal);localEklendi=true;}
-        });
-        ['musteriler','urunler'].forEach(function(t){
-          if(!sheetsD[t]) sheetsD[t]=[];
-          if(t==='musteriler'){
-            sheetsD[t]=[...new Set((sheetsD[t]||[]).concat(D[t]||[]))];
-          } else {
-            var mevcut=new Set((sheetsD[t]||[]).map(function(u){return u.anahtar;}));
-            var ekle=(D[t]||[]).filter(function(u){return u.anahtar&&!mevcut.has(u.anahtar);});
-            sheetsD[t]=(sheetsD[t]||[]).concat(ekle);
-          }
-        });
-        D=sheetsD;
+        // Sheets master kaynak — local merge YOK, direkt üzerine yaz
+        D=json.data;
+        // Eksik tabloları boş dizi ile doldur
         ['satis','uretim','teslimat','cari','gider','musteriler','urunler','stok','iadeler'].forEach(function(t){
-          if(D[t]) localStorage.setItem('sd4_'+t,JSON.stringify(D[t]));
+          if(!D[t]) D[t]=[];
+          localStorage.setItem('sd4_'+t,JSON.stringify(D[t]));
         });
-        if(localEklendi) setTimeout(syncToSheets,500);
         if(durum){durum.textContent='✓ Güncellendi';durum.style.color='var(--green)';setTimeout(function(){if(durum)durum.textContent='';},3000);}
         return true;
       } else {
@@ -900,7 +885,7 @@ function editSatis(id){
       <div class="fg"><label class="lbl">Müşteri</label><input type="text" id="ed-musteri" value="${s.musteri}"></div>
       <div class="fg"><label class="lbl">Döviz</label><select id="ed-dov">${['USD','EUR','GBP'].map(d=>`<option${s.dovTur===d?' selected':''}>${d}</option>`).join('')}</select></div>
     </div>
-    <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:8px">Ürünler</div>
+    <div style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;margin-bottom:8px">Ürünler</div>
     ${s.urunler.map((u,i)=>`<div class="grid g4" style="gap:8px;margin-bottom:6px;padding:8px;background:var(--bg1);border-radius:7px">
       <div class="fg"><label class="lbl">Ürün</label><input type="text" id="ed-u${i}-urun" value="${u.urun}"></div>
       <div class="fg"><label class="lbl">Renk/Kod</label><input type="text" id="ed-u${i}-renk" value="${u.renkKod||''}"></div>
@@ -1055,20 +1040,33 @@ function uretimDoldur(){
   // Üretim ürün satırları
   const detay=document.getElementById('u-urun-satirlar');
   detay.innerHTML=s.urunler.map((u,i)=>`
-    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px;margin-bottom:8px;padding:10px;background:var(--bg1);border:1px solid var(--border);border-radius:8px">
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Ürün</div>
-        <div style="font-size:13px;font-weight:600">${u.urun} ${u.renkKod?'/ '+u.renkKod:''}</div>
-        <div style="font-size:11px;color:var(--text3)">Sipariş: ${fmt(u.miktar)} m</div>
+    <div style="padding:10px;background:var(--bg1);border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <div>
+          <span style="font-size:13px;font-weight:700;color:var(--acc)">${u.urun}</span>
+          ${u.renkKod?`<span style="font-size:12px;color:var(--text2);margin-left:6px">/ ${u.renkKod}</span>`:''}
+          <span style="font-size:11px;color:var(--text3);margin-left:8px">Sipari\u015f: ${fmt(u.miktar)} m</span>
+        </div>
       </div>
-      <div class="fg"><label class="lbl">Üretim Miktarı (m)</label>
-        <input type="number" id="uu-miktar-${i}" value="${u.miktar}" step="0.01" oninput="hUretim()">
+      <div class="grid g4" style="gap:8px">
+        <div class="fg"><label class="lbl">\u00dcretim Miktar\u0131 (m)</label>
+          <input type="number" id="uu-miktar-${i}" value="${u.miktar}" step="0.01" oninput="hUretim()">
+        </div>
+        <div class="fg"><label class="lbl">D\u00f6viz T\u00fcr\u00fc</label>
+          <select id="uu-dov-${i}" onchange="hUretim()">
+            <option value="USD" ${s.dovTur==='USD'?'selected':''}>USD</option>
+            <option value="EUR" ${s.dovTur==='EUR'?'selected':''}>EUR</option>
+          </select>
+        </div>
+        <div class="fg"><label class="lbl">Al\u0131\u015f Fiyat\u0131 (D\u00f6viz)</label>
+          <input type="number" id="uu-birim-${i}" placeholder="0.0000" step="0.0001" oninput="hUretim()">
+        </div>
+        <div class="fg"><label class="lbl">Kur (\u20ba/D\u00f6viz)</label>
+          <input type="number" id="uu-kur-${i}" placeholder="0.00" step="0.01" oninput="hUretim()">
+        </div>
       </div>
-      <div class="fg"><label class="lbl">Alış Fiyatı (${s.dovTur})</label>
-        <input type="number" id="uu-birim-${i}" placeholder="0.0000" step="0.0001" oninput="hUretim()">
-      </div>
-      <div class="fg"><label class="lbl">Kur (₺/${s.dovTur})</label>
-        <input type="number" id="uu-kur-${i}" placeholder="0.00" step="0.01" oninput="hUretim()">
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">
+        Bor\u00e7: <strong id="uu-tl-${i}" style="color:var(--red)">-</strong>
       </div>
     </div>`).join('');
   document.getElementById('u-urun-detay').style.display='block';
@@ -1080,17 +1078,25 @@ function hUretim(){
   const id=document.getElementById('u-sref').value;
   const s=D.satis.find(x=>x.id===id);
   if(!s)return;
-  let topDov=0,topTL=0;
+  let topTL=0;
+  const dovOzet={};
   s.urunler.forEach((u,i)=>{
     const m=+document.getElementById('uu-miktar-'+i)?.value||0;
     const b=+document.getElementById('uu-birim-'+i)?.value||0;
     const k=+document.getElementById('uu-kur-'+i)?.value||0;
-    topDov+=b*m;
-    topTL+=b*m*k;
+    const dov=document.getElementById('uu-dov-'+i)?.value||s.dovTur;
+    const tl=+(b*m*k).toFixed(2);
+    const dovTutar=+(b*m).toFixed(2);
+    topTL+=tl;
+    dovOzet[dov]=(dovOzet[dov]||0)+dovTutar;
+    // Satır borç göster
+    const tlEl=document.getElementById('uu-tl-'+i);
+    if(tlEl) tlEl.textContent=fmt(dovTutar,2)+' '+dov+' = ₺'+fmt(tl);
   });
-  document.getElementById('ui-tdov').textContent=fmt(topDov)+' '+s.dovTur;
+  const dovStr=Object.entries(dovOzet).map(([d,v])=>fmt(v)+' '+d).join(' + ');
+  document.getElementById('ui-tdov').textContent=dovStr||'-';
   const tlSpan=document.getElementById('ui-ttl');
-  if(tlSpan)tlSpan.textContent=fmt(topTL)+' ₺';
+  if(tlSpan)tlSpan.textContent='₺'+fmt(topTL);
 }
 
 function ekUretim(){
@@ -1109,10 +1115,11 @@ function ekUretim(){
     const m=+document.getElementById('uu-miktar-'+i)?.value||0;
     const b=+document.getElementById('uu-birim-'+i)?.value||0;
     const k=+document.getElementById('uu-kur-'+i)?.value||0;
+    const urunDov=document.getElementById('uu-dov-'+i)?.value||s.dovTur;
     const ad=+(b*m).toFixed(2);
     const tl=+(b*m*k).toFixed(2);
     topDov+=ad;topTL+=tl;
-    return{urun:u.urun,renkKod:u.renkKod,sipMiktar:u.miktar,uretimMiktar:m,alisbirim:b,kur:k,alisDov:ad,alisTL:tl};
+    return{urun:u.urun,renkKod:u.renkKod,sipMiktar:u.miktar,uretimMiktar:m,alisbirim:b,kur:k,alisDov:ad,alisTL:tl,dovTur:urunDov};
   });
   D.uretim.push({
     id:uid('U'),satisRef:refId,musteri:s.musteri,fabrika:fab,
@@ -1231,6 +1238,7 @@ function editUretim(id){
       <div style="font-size:12px;font-weight:600;margin-bottom:6px">${u.urun} ${u.renkKod?'/ '+u.renkKod:''}</div>
       <div class="grid g3" style="gap:8px">
         <div class="fg"><label class="lbl">Üretim(m)</label><input type="number" id="eu-m${i}" value="${u.uretimMiktar}" step="0.01"></div>
+        <div class="fg"><label class="lbl">Döviz</label><select id="eu-dov${i}"><option value="USD" ${(u.dovTur||r.dovTur)==='USD'?'selected':''}>USD</option><option value="EUR" ${(u.dovTur||r.dovTur)==='EUR'?'selected':''}>EUR</option></select></div>
         <div class="fg"><label class="lbl">Alış Fiyatı</label><input type="number" id="eu-b${i}" value="${u.alisbirim}" step="0.0001"></div>
         <div class="fg"><label class="lbl">Kur</label><input type="number" id="eu-k${i}" value="${u.kur||0}" step="0.01"></div>
       </div>
@@ -1251,11 +1259,13 @@ function kaydetEditUretim(id,n){
     const m=+document.getElementById('eu-m'+i).value||0;
     const b=+document.getElementById('eu-b'+i).value||0;
     const k=+document.getElementById('eu-k'+i).value||0;
+    const urunDov=document.getElementById('eu-dov'+i)?.value||r.dovTur;
     const ad=+(b*m).toFixed(2);
     const tl=+(b*m*k).toFixed(2);
     r.urunler[i].uretimMiktar=m;
     r.urunler[i].alisbirim=b;
     r.urunler[i].kur=k;
+    r.urunler[i].dovTur=urunDov;
     r.urunler[i].alisDov=ad;
     r.urunler[i].alisTL=tl;
     topDov+=ad;topTL+=tl;
