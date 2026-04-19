@@ -2473,24 +2473,24 @@ renderSatisListe();renderUretimListe();renderTeslimatListe();
 guncTumRef();guncMusteriDatalist();renderFihrist();
 
 // Sayfa açılınca sync ve kur
+function renderHepsini(){
+  renderSatisListe();renderUretimListe();renderTeslimatListe();
+  guncTumRef();guncMusteriDatalist();renderFihrist();
+}
+
 function baslat(){
-  // Önce local'i Sheets'e gönder, sonra birleştirilmiş veriyi çek
-  fetch(SYNC_URL,{method:'POST',body:JSON.stringify(D),headers:{'Content-Type':'text/plain'}})
-    .then(()=>loadFromSheets())
-    .then(guncel=>{
-      if(guncel){
-        renderSatisListe();renderUretimListe();renderTeslimatListe();
-        guncTumRef();guncMusteriDatalist();renderFihrist();
-      }
-    })
-    .catch(()=>loadFromSheets());
-  
-  // Her 60 saniyede bir otomatik güncelle
-  setInterval(()=>{ loadFromSheets().then(g=>{ if(g){ renderSatisListe();renderUretimListe();renderTeslimatListe();guncTumRef(); }}); }, 60000);
+  // Sayfa açılışta sadece Sheets'ten çek
+  loadFromSheets().then(guncel=>{
+    if(guncel) renderHepsini();
+  });
+
+  // Her 10 saniyede bir otomatik güncelle
+  setInterval(()=>{
+    loadFromSheets().then(g=>{ if(g) renderHepsini(); });
+  }, 10000);
 
   // Kur verilerini çek
   kurGuncelle();
-  // Her 30 dakikada bir güncelle
   setInterval(kurGuncelle, 30*60*1000);
 }
 baslat();
