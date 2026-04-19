@@ -883,6 +883,7 @@ function silSatis(id){
   D.uretim=D.uretim.filter(u=>u.satisRef!==id);
   D.teslimat=D.teslimat.filter(t=>t.satisRef!==id);
   ['satis','uretim','teslimat'].forEach(kaydet);
+  syncToSheets();
   renderSatisListe();guncTumRef();
 }
 
@@ -1266,7 +1267,7 @@ function kaydetEditUretim(id,n){
 function silUretim(id){
   if(!confirm('Üretim kaydı silinsin mi?'))return;
   D.uretim=D.uretim.filter(u=>u.id!==id);
-  kaydet('uretim');renderSatisListe();renderUretimListe();guncUretimRef();
+  kaydet('uretim');syncToSheets();renderSatisListe();renderUretimListe();guncUretimRef();
 }
 function temUretim(){
   document.getElementById('u-sref').value='';
@@ -1556,7 +1557,7 @@ function kaydetEditTeslimat(id,n){
   kaydet('teslimat');renderTeslimatListe();editModalKapat();
 }
 
-function silTeslimat(id){if(!confirm('Teslimat silinsin mi?'))return;D.teslimat=D.teslimat.filter(t=>t.id!==id);kaydet('teslimat');renderTeslimatListe();}
+function silTeslimat(id){if(!confirm('Teslimat silinsin mi?'))return;D.teslimat=D.teslimat.filter(t=>t.id!==id);kaydet('teslimat');syncToSheets();renderTeslimatListe();}
 function temTeslimat(){
   document.getElementById('t-sref').value='';
   document.getElementById('t-musteri').value='';
@@ -1747,7 +1748,7 @@ function renderCari(){
       +'</div>';
   }).join('');
 }
-function silCari(id){if(!confirm('Tahsilat silinsin mi?'))return;D.cari=D.cari.filter(c=>c.id!==id);kaydet('cari');renderCari();}
+function silCari(id){if(!confirm('Tahsilat silinsin mi?'))return;D.cari=D.cari.filter(c=>c.id!==id);kaydet('cari');syncToSheets();renderCari();}
 function temCari(){['c-musteri','c-tl','c-dov','c-acik'].forEach(id=>document.getElementById(id).value='');document.getElementById('c-tarih').value=bugun();}
 
 // ============================================================
@@ -2015,7 +2016,7 @@ function akordToggle(head){
   body.classList.toggle('open');
 }
 
-function silGider(ay){if(!confirm('Bu aya ait gider silinsin mi?'))return;D.gider=D.gider.filter(g=>g.ay!==ay);kaydet('gider');renderKar();}
+function silGider(ay){if(!confirm('Bu aya ait gider silinsin mi?'))return;D.gider=D.gider.filter(g=>g.ay!==ay);kaydet('gider');syncToSheets();renderKar();}
 function temGider(){for(let i=1;i<=5;i++){document.getElementById('g'+i+'-ad').value='';document.getElementById('g'+i+'-t').value='';}document.getElementById('g-not').value='';}
 
 // ============================================================
@@ -2156,7 +2157,7 @@ function renderStokListe(){
 function silStok(id){
   if(!confirm('Stok kaydı silinsin mi?'))return;
   D.stok=D.stok.filter(s=>s.id!==id);
-  kaydet('stok');
+  kaydet('stok');syncToSheets();
   renderStokListe();
   renderStokOzet();
 }
