@@ -7,28 +7,28 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg0:#0e1117;
-  --bg1:#141920;
-  --bg2:#1a2030;
-  --bg3:#212840;
-  --border:#2a3348;
-  --border2:#3a4560;
-  --text:#e2ddd6;
-  --text2:#a8a39c;
-  --text3:#6e6a65;
-  --acc:#d4a853;
-  --acc2:#b8923f;
-  --green:#3ecf7a;
-  --red:#f06c6c;
-  --blue:#5b9cf6;
-  --purple:#a78bfa;
-  --muted:#6e6a65;
+  --bg0:#181c24;
+  --bg1:#1e2330;
+  --bg2:#242b3a;
+  --bg3:#2c3448;
+  --border:#2e374a;
+  --border2:#3d4a60;
+  --text:#ddd8d0;
+  --text2:#9a9590;
+  --text3:#606570;
+  --acc:#c9a05a;
+  --acc2:#a8832e;
+  --green:#48b87a;
+  --red:#d96060;
+  --blue:#5490e0;
+  --purple:#9b82e8;
+  --muted:#606570;
 }
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg0);color:var(--text);font-size:14px;line-height:1.55}
 
 /* ── Topbar ── */
-.topbar{background:var(--bg1);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--border)}
-.topbar h1{font-size:14px;font-weight:700;letter-spacing:1px;color:var(--acc);text-transform:uppercase}
+.topbar{background:#161b26;padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--border)}
+.topbar h1{font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--acc);text-transform:uppercase}
 .topbar span{font-size:11px;color:var(--text3)}
 
 /* ── Nav ── */
@@ -67,19 +67,19 @@ select{cursor:pointer}
 .btn:hover{background:var(--border2);border-color:var(--text3)}
 .btn:active{transform:scale(0.98)}
 .btn-primary{background:var(--acc);color:#0e1117;border-color:var(--acc);font-weight:700}.btn-primary:hover{background:var(--acc2);border-color:var(--acc2)}
-.btn-green{background:#0d3320;color:var(--green);border-color:#1a5535}.btn-green:hover{background:#1a5535}
-.btn-red{background:#2a0f0f;color:var(--red);border-color:#5a1a1a}.btn-red:hover{background:#3d1515}
-.btn-blue{background:#0c1e3d;color:var(--blue);border-color:#1a3a6e}.btn-blue:hover{background:#1a3a6e}
-.btn-export{background:#1a2a1a;color:var(--green);border-color:#2a4a2a;font-size:11px;padding:6px 12px}.btn-export:hover{background:#2a4a2a}
+.btn-green{background:#0e1e14;color:var(--green);border-color:#1c3824}.btn-green:hover{background:#1c3824}
+.btn-red{background:#201010;color:var(--red);border-color:#3a1818}.btn-red:hover{background:#2e1414}
+.btn-blue{background:#0e1a2e;color:var(--blue);border-color:#1a2e50}.btn-blue:hover{background:#1a2e50}
+.btn-export{background:#151c14;color:var(--green);border-color:#1e3020;font-size:11px;padding:6px 12px}.btn-export:hover{background:#1e3020}
 .btn-sm{padding:6px 12px;font-size:11px}
 .btn-xs{padding:3px 8px;font-size:11px;border-radius:6px}
 .bgrp{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 
 /* ── Info box ── */
-.infobox{background:#0d2215;border:1px solid #1a4028;border-radius:8px;padding:10px 14px;margin:10px 0;display:none;flex-wrap:wrap;gap:16px}
+.infobox{background:#141e18;border:1px solid #243428;border-radius:8px;padding:10px 14px;margin:10px 0;display:none;flex-wrap:wrap;gap:16px}
 .infobox.show{display:flex}
-.infobox .iv label{font-size:10px;color:var(--green);font-weight:700;text-transform:uppercase;display:block;margin-bottom:2px}
-.infobox .iv span{font-size:13px;font-weight:700;color:var(--green)}
+.infobox .iv label{font-size:10px;color:var(--acc);font-weight:600;text-transform:uppercase;display:block;margin-bottom:2px;letter-spacing:0.4px}
+.infobox .iv span{font-size:13px;font-weight:700;color:var(--text)}
 
 /* ── Section header ── */
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
@@ -94,32 +94,32 @@ select{cursor:pointer}
 /* ── Tables ── */
 .tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
 table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px}
-th{padding:9px 11px;text-align:left;font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);background:var(--bg1);white-space:nowrap}
-td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+th{padding:8px 10px;text-align:left;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid var(--border);background:var(--bg1);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:var(--bg3)}
+tr:hover td{background:rgba(44,52,72,0.5)}
 .empty{text-align:center;padding:24px;color:var(--text3);font-size:12px}
 
 /* ── Badges ── */
-.badge{display:inline-block;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:0.3px}
-.b-bekl{background:#2a1800;color:#f59e0b}
-.b-teslim{background:#0d2215;color:var(--green)}
-.b-kismi{background:#0c1e3d;color:var(--blue)}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:0.2px}
+.b-bekl{background:#2a2010;color:#c8922a;border:1px solid #3a2e14}
+.b-teslim{background:#0f2018;color:#48b87a;border:1px solid #1a3828}
+.b-kismi{background:#0f1a2e;color:#5490e0;border:1px solid #1a2a48}
 
 /* ── Metric cards ── */
 .metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
 .mc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 12px;text-align:center}
 .mc-val{font-size:18px;font-weight:800;color:var(--text)}
 .mc-lbl{font-size:10px;color:var(--text2);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px}
-.mc.featured{border-color:var(--acc);background:linear-gradient(135deg,#1a1400,#201a00)}
+.mc.featured{border-color:var(--acc);background:#1e1a0e}
 .mc.featured .mc-val{color:var(--acc)}
 .mc-val.g{color:var(--green)}.mc-val.r{color:var(--red)}.mc-val.b{color:var(--blue)}
 
 /* ── Sipariş kart ── */
-.sip-kart{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;transition:border-color .15s}
-.sip-kart:hover{border-color:var(--border2)}
-.sip-kart-head{padding:12px 16px;background:var(--bg1);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;user-select:none}
-.sip-kart-body{padding:14px 16px;display:none}.sip-kart-body.acik{display:block}
+.sip-kart{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.sip-kart:hover{border-color:var(--border2);box-shadow:0 2px 12px rgba(0,0,0,0.25)}
+.sip-kart-head{padding:11px 14px;background:var(--bg1);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;user-select:none}
+.sip-kart-body{padding:13px 14px;display:none}.sip-kart-body.acik{display:block}
 
 /* ── Ürün satırı ── */
 .urun-satir{display:grid;grid-template-columns:1.5fr 1fr 0.8fr 0.8fr auto;gap:8px;align-items:end;margin-bottom:8px;padding:10px 12px;background:var(--bg1);border:1px solid var(--border);border-radius:8px}
@@ -855,7 +855,7 @@ function _sipKartHtml(s){
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
         <button class="btn btn-xs" style="background:#2a1800;color:#d4a853;border-color:#5a3a00" onclick="fisMusteriGoster('${s.id}')">Müşteri Fişi</button>
-        <button class="btn btn-xs" style="background:#0c1e3d;color:var(--blue);border-color:#1a3a6e" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
+        <button class="btn btn-xs" style="background:#101828;color:var(--blue);border-color:#1a3a6e" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
         <button class="btn btn-xs" onclick="editSatis('${s.id}')">Düzenle</button>
         <button class="btn btn-red btn-xs" onclick="silSatis('${s.id}')">Sil</button>
         <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">▾</span>
@@ -1198,7 +1198,7 @@ function ekUretim(){
 function _ureKartHtml(r){
   const fazlalar=r.urunler.filter(u=>(u.uretimMiktar||0)>(u.sipMiktar||0));
   const fazlaHtml=fazlalar.length?`
-    <div style="margin-top:10px;padding:10px 12px;background:#182200;border:1px solid #2e4a00;border-radius:8px">
+    <div style="margin-top:10px;padding:10px 12px;background:#141c08;border:1px solid #253800;border-radius:8px">
       <div class="fazla-box-title">⚠ Fazla Üretim</div>
       ${fazlalar.map(u=>{
         const fazla=+(u.uretimMiktar-u.sipMiktar).toFixed(2);
@@ -1211,7 +1211,7 @@ function _ureKartHtml(r){
             <span style="font-size:11px;color:var(--text2);margin-left:8px">Maliyet: ${fmt(fazlaDov,2)} ${r.dovTur} / ₺${fmt(fazlaMaliyet)}</span>
           </div>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-xs" style="background:#1E40AF;color:#fff;border-color:var(--blue)" onclick="fazlaStok('${r.id}','${u.urun}','${u.renkKod||''}',${fazla})">Stoğa At</button>
+            <button class="btn btn-xs" style="background:#1a3580;color:#fff;border-color:var(--blue)" onclick="fazlaStok('${r.id}','${u.urun}','${u.renkKod||''}',${fazla})">Stoğa At</button>
             <button class="btn btn-red btn-xs" onclick="fazlaIade('${r.id}','${u.urun}','${u.renkKod||''}',${fazla},${u.alisbirim},${u.kur||0},${fazlaMaliyet})">İade Et</button>
           </div>
         </div>`;
@@ -1219,8 +1219,8 @@ function _ureKartHtml(r){
     </div>`:''
   const eksikler=r.urunler.filter(u=>(u.uretimMiktar||0)<(u.sipMiktar||0));
   const topEksik=eksikler.reduce((a,u)=>a+((u.sipMiktar||0)-(u.uretimMiktar||0)),0);
-  const eksikRozet=eksikler.length?`<span style="background:#2a0f0f;color:var(--red);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u26a0 ${fmt(topEksik)} m eksik</span>`:'';
-  const tamRozet=!eksikler.length&&!fazlalar.length?`<span style="background:#052e16;color:var(--green);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u2713 Tam</span>`:'';
+  const eksikRozet=eksikler.length?`<span style="background:#1e1010;color:var(--red);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u26a0 ${fmt(topEksik)} m eksik</span>`:'';
+  const tamRozet=!eksikler.length&&!fazlalar.length?`<span style="background:#111c14;color:var(--green);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u2713 Tam</span>`:'';
   const iadeKayitlari=(D.iadeler||[]).filter(x=>x.uretimRef===r.id);
   return `<div class="sip-kart">
     <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
@@ -1275,7 +1275,7 @@ function _ureKartHtml(r){
             </div>
             <div style="display:flex;gap:6px;align-items:center">
               <span style="font-size:12px;font-weight:700;color:var(--red)">₺${fmt(iade.maliyet)} düşüldü</span>
-              <button class="btn btn-xs" style="background:#0c1e3d;color:var(--blue);border-color:#1a3a6e" onclick="iadeFisGoster('${iade.id}')">📄 Fişi Gör</button>
+              <button class="btn btn-xs" style="background:#101828;color:var(--blue);border-color:#1a3a6e" onclick="iadeFisGoster('${iade.id}')">📄 Fişi Gör</button>
               <button class="btn btn-red btn-xs" onclick="silIade('${iade.id}','${r.id}')">Sil</button>
             </div>
           </div>`).join('')+
@@ -1460,7 +1460,7 @@ function teslimatDoldur(){
         <div class="fg"><label class="lbl">Bu Teslimat (m)</label>
           <input type="number" id="tu-miktar-${i}" value="${tamam?0:kalan}" step="0.01" oninput="hTeslimat()">
         </div>
-        <div class="fg"><label class="lbl">Satış Birim <span style="background:#052e16;color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px">Satıştan</span></label>
+        <div class="fg"><label class="lbl">Satış Birim <span style="background:#111c14;color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px">Satıştan</span></label>
           <input class="auto" readonly value="${fmt(u.birim,4)} ${s.dovTur}">
         </div>
         <div class="fg"><label class="lbl">Kur (₺/${s.dovTur})</label>
@@ -1565,9 +1565,9 @@ function _tesGrupKartHtml(satisRef, teslimler){
       ${teslimler.map((r,ti)=>{
         const dc={Beklemede:'b-bekl','Teslim Edildi':'b-teslim','Kısmi Teslimat':'b-kismi','Tamamlandı':'b-teslim'}[r.durum]||'b-bekl';
         const topAl=r.topAlacakTL!=null?r.topAlacakTL:(r.urunler||[]).reduce((a,u)=>a+(u.alacakTL||u.topBorc||0),0);
-        const gc=r.gun===null?'':r.gun<=7?`<span style="background:#052e16;color:var(--green);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
+        const gc=r.gun===null?'':r.gun<=7?`<span style="background:#111c14;color:var(--green);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
           r.gun<=30?`<span style="background:#2a1800;color:var(--acc);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
-          `<span style="background:#2a0f0f;color:var(--red);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`;
+          `<span style="background:#1e1010;color:var(--red);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`;
         return `<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden">
           <div style="padding:8px 12px;background:var(--bg1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
             <div style="display:flex;align-items:center;gap:8px;font-size:12px">
@@ -1600,7 +1600,7 @@ function _tesGrupKartHtml(satisRef, teslimler){
           </div>
         </div>`;
       }).join('')}
-      ${ds.durum!=='Tamamlandı'?`<div style="padding:8px;background:#0a1a00;border:1px dashed var(--green);border-radius:8px;text-align:center;font-size:12px;color:var(--green)">
+      ${ds.durum!=='Tamamlandı'?`<div style="padding:8px;background:#0e1810;border:1px dashed var(--green);border-radius:8px;text-align:center;font-size:12px;color:var(--green)">
         Kalan: <strong>${fmt(ds.topSiparis-ds.topTeslim)} m</strong> — Satış/Teslim sekmesinden yeni teslimat girebilirsin
       </div>`:''}
     </div>
@@ -2276,7 +2276,7 @@ function renderStokListe(){
   el.innerHTML=`<div class="tbl-wrap"><table>
     <thead><tr><th>Tarih</th><th>Ürün</th><th>Renk/Kod</th><th>Miktar(m)</th><th>Kalite</th><th></th></tr></thead>
     <tbody>${liste.map((s,i)=>{
-      const kalBg=s.kalite==='A1'?'background:#052e16;color:var(--green)':'background:#3b0f0f;color:var(--red)';
+      const kalBg=s.kalite==='A1'?'background:#111c14;color:var(--green)':'background:#3b0f0f;color:var(--red)';
       const realIdx=D.stok.indexOf(s);
       return `<tr>
         <td>${s.tarih}</td><td>${s.urun}</td><td>${s.renkKod||'-'}</td>
