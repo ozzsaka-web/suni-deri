@@ -83,6 +83,12 @@ select{cursor:pointer}
 
 /* ── Section header ── */
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.stab-wrap{display:flex;align-items:flex-end;gap:0;flex:1;min-width:0}
+.stab{background:var(--bg2);color:var(--text3);border:1px solid var(--border);border-bottom:2px solid var(--border);padding:6px 14px;font-size:11px;font-weight:700;letter-spacing:0.3px;cursor:pointer;border-radius:7px 7px 0 0;transition:all .15s;text-transform:uppercase;white-space:nowrap}
+.stab.stab-active{background:var(--bg1);color:var(--acc);border-color:var(--acc);border-bottom-color:var(--bg1)}
+.stab:hover:not(.stab-active){color:var(--text2);background:var(--bg1)}
+.stab-badge{display:inline-block;background:var(--acc);color:#000;border-radius:10px;padding:0 7px;font-size:10px;margin-left:5px;font-weight:800}
+.sekme-panel{border:1px solid var(--border);border-radius:0 8px 8px 8px;padding:10px 0 0 0;margin-bottom:4px}
 .sh h3{font-size:13px;font-weight:700;color:var(--text)}
 
 /* ── Tables ── */
@@ -284,8 +290,17 @@ tr:hover td{background:var(--bg3)}
     </div>
   </div>
 
-  <div class="sh"><h3>Siparişler</h3><button class="btn btn-blue btn-sm" onclick="expCSV('satis')">CSV İndir</button></div>
-  <div id="satis-liste"></div>
+  <div class="sh" style="margin-top:14px;margin-bottom:0;align-items:flex-end">
+    <div class="stab-wrap">
+      <button id="stab-bekl" class="stab stab-active" onclick="satirSekme('bekl')">⏳ ÜRETİM BEKLEYENLERİ</button>
+      <button id="stab-giril" class="stab" onclick="satirSekme('giril')">✓ ÜRETİM GİRİLENLER <span id="stab-giril-sayi" class="stab-badge">0</span></button>
+    </div>
+    <button class="btn btn-blue btn-sm" style="margin-bottom:2px" onclick="expCSV('satis')">CSV İndir</button>
+  </div>
+  <div class="sekme-panel">
+    <div id="satis-bekl-liste" style="padding:0 4px"></div>
+    <div id="satis-giril-liste" style="display:none;padding:0 4px"></div>
+  </div>
 </div>
 
 <!-- ===== ÜRETİM ===== -->
@@ -319,8 +334,17 @@ tr:hover td{background:var(--bg3)}
     </div>
   </div>
 
-  <div class="sh"><h3>Üretim Siparişleri</h3><button class="btn btn-blue btn-sm" onclick="expCSV('uretim')">CSV İndir</button></div>
-  <div id="uretim-liste"></div>
+  <div class="sh" style="margin-top:14px;margin-bottom:0;align-items:flex-end">
+    <div class="stab-wrap">
+      <button id="utab-devam" class="stab stab-active" onclick="uretimSekme('devam')">🔧 DEVAM EDENLER</button>
+      <button id="utab-tam" class="stab" onclick="uretimSekme('tam')">✓ TAMAMLANANLAR <span id="utab-tam-sayi" class="stab-badge">0</span></button>
+    </div>
+    <button class="btn btn-blue btn-sm" style="margin-bottom:2px" onclick="expCSV('uretim')">CSV İndir</button>
+  </div>
+  <div class="sekme-panel">
+    <div id="uretim-devam-liste" style="padding:0 4px"></div>
+    <div id="uretim-tam-liste" style="display:none;padding:0 4px"></div>
+  </div>
 </div>
 
 <!-- ===== TESLİMAT ===== -->
@@ -349,8 +373,17 @@ tr:hover td{background:var(--bg3)}
     </div>
   </div>
 
-  <div class="sh"><h3>Satış/Teslim Kayıtları</h3><button class="btn btn-blue btn-sm" onclick="expCSV('teslimat')">CSV İndir</button></div>
-  <div id="teslimat-liste"></div>
+  <div class="sh" style="margin-top:14px;margin-bottom:0;align-items:flex-end">
+    <div class="stab-wrap">
+      <button id="ttab-devam" class="stab stab-active" onclick="teslimatSekme('devam')">📦 DEVAM EDENLER</button>
+      <button id="ttab-tam" class="stab" onclick="teslimatSekme('tam')">✓ TAMAMLANANLAR <span id="ttab-tam-sayi" class="stab-badge">0</span></button>
+    </div>
+    <button class="btn btn-blue btn-sm" style="margin-bottom:2px" onclick="expCSV('teslimat')">CSV İndir</button>
+  </div>
+  <div class="sekme-panel">
+    <div id="teslimat-devam-liste" style="padding:0 4px"></div>
+    <div id="teslimat-tam-liste" style="display:none;padding:0 4px"></div>
+  </div>
 </div>
 
 <!-- ===== CARİ ===== -->
@@ -801,55 +834,85 @@ function sipAkordion(el){
   kart.style.borderColor = acik ? 'var(--acc)' : '';
 }
 
+// Sipariş kart HTML üretici (yardımcı)
+function _sipKartHtml(s){
+  const uretim=D.uretim.find(u=>u.satisRef===s.id);
+  const topDovTxt=fmt(s.topDov)+' '+s.dovTur;
+  const uretimBadge=uretim
+    ?`<span class="badge b-teslim">${uretim.fabrika}</span>`
+    :`<span class="badge b-bekl">Üretim yok</span>`;
+  return `<div class="sip-kart">
+    <div class="sip-kart-head" onclick="sipAkordion(this)">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:13px;font-weight:700">${s.tarih}</span>
+          <span style="font-size:13px;font-weight:800;color:var(--acc)">${s.musteri}</span>
+          ${uretimBadge}
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:3px">
+          ${s.urunler.length} ürün &nbsp;·&nbsp; <strong style="color:var(--acc)">${topDovTxt}</strong> &nbsp;·&nbsp; TL teslimatta
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
+        <button class="btn btn-xs" style="background:#2a1800;color:#d4a853;border-color:#5a3a00" onclick="fisMusteriGoster('${s.id}')">Müşteri Fişi</button>
+        <button class="btn btn-xs" style="background:#0c1e3d;color:var(--blue);border-color:#1a3a6e" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
+        <button class="btn btn-xs" onclick="editSatis('${s.id}')">Düzenle</button>
+        <button class="btn btn-red btn-xs" onclick="silSatis('${s.id}')">Sil</button>
+        <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">▾</span>
+      </div>
+    </div>
+    <div class="sip-kart-body">
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Miktar (m)</th><th>Birim Fiyat</th><th>Toplam Döviz</th><th>Not</th></tr></thead>
+        <tbody>
+          ${s.urunler.map(u=>`<tr>
+            <td>${u.urun}</td><td>${u.renkKod||'-'}</td><td>${fmt(u.miktar)}</td>
+            <td>${fmt(u.birim,4)} ${s.dovTur}</td>
+            <td style="font-weight:700;color:var(--acc)">${fmt(u.topDov)} ${s.dovTur}</td>
+            <td style="color:var(--muted);font-size:11px">TL → Satış/Teslim'de</td>
+          </tr>`).join('')}
+        </tbody></table>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+        <span>Toplam: <strong style="color:var(--blue)">${fmt(s.topDov)} ${s.dovTur}</strong></span>
+        <span style="color:var(--muted);font-size:11px">TL, satış/teslimde kurla hesaplanır</span>
+        <span>Üretim: ${uretim?`<span class="badge b-teslim">${uretim.fabrika}</span>`:`<span class="badge b-bekl">Girilmedi</span>`}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+let _satisAktifSekme='bekl';
+function satirSekme(s){
+  _satisAktifSekme=s;
+  document.getElementById('stab-bekl').className='stab'+(s==='bekl'?' stab-active':'');
+  document.getElementById('stab-giril').className='stab'+(s==='giril'?' stab-active':'');
+  document.getElementById('satis-giril-liste').style.display=s==='giril'?'block':'none';
+  document.getElementById('satis-bekl-liste').style.display=s==='bekl'?'block':'none';
+  renderSatisListe();
+}
+
 function renderSatisListe(){
-  const el=document.getElementById('satis-liste');
-  if(!D.satis.length){el.innerHTML='<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px">Henüz sipariş yok</div>';return}
-  el.innerHTML=D.satis.map((s,i)=>{
-    const uretim=D.uretim.find(u=>u.satisRef===s.id);
-    const topDovTxt = fmt(s.topDov)+' '+s.dovTur;
-    const uretimBadge = uretim
-      ? `<span class="badge b-teslim">${uretim.fabrika}</span>`
-      : `<span class="badge b-bekl">Üretim yok</span>`;
-    return `<div class="sip-kart">
-      <div class="sip-kart-head" onclick="sipAkordion(this)">
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-            <span style="font-size:13px;font-weight:700">${s.tarih}</span>
-            <span style="font-size:13px;font-weight:800;color:var(--acc)">${s.musteri}</span>
-            ${uretimBadge}
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-top:3px">
-            ${s.urunler.length} ürün &nbsp;·&nbsp; <strong style="color:var(--acc)">${topDovTxt}</strong> &nbsp;·&nbsp; TL teslimatta
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
-          <button class="btn btn-xs" style="background:#2a1800;color:#d4a853;border-color:#5a3a00" onclick="fisMusteriGoster('${s.id}')">Müşteri Fişi</button>
-          <button class="btn btn-xs" style="background:#0c1e3d;color:var(--blue);border-color:#1a3a6e" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
-          <button class="btn btn-xs" onclick="editSatis('${s.id}')">Düzenle</button>
-          <button class="btn btn-red btn-xs" onclick="silSatis('${s.id}')">Sil</button>
-          <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">▾</span>
-        </div>
-      </div>
-      <div class="sip-kart-body">
-        <div class="tbl-wrap">
-          <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Miktar (m)</th><th>Birim Fiyat</th><th>Toplam Döviz</th><th>Not</th></tr></thead>
-          <tbody>
-            ${s.urunler.map(u=>`<tr>
-              <td>${u.urun}</td><td>${u.renkKod||'-'}</td><td>${fmt(u.miktar)}</td>
-              <td>${fmt(u.birim,4)} ${s.dovTur}</td>
-              <td style="font-weight:700;color:var(--acc)">${fmt(u.topDov)} ${s.dovTur}</td>
-              <td style="color:var(--muted);font-size:11px">TL → Satış/Teslim'de</td>
-            </tr>`).join('')}
-          </tbody></table>
-        </div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
-          <span>Toplam: <strong style="color:var(--blue)">${fmt(s.topDov)} ${s.dovTur}</strong></span>
-<span style="color:var(--muted);font-size:11px">TL, satış/teslimde kurla hesaplanır</span>
-          <span>Satış/Teslim: ${uretim?`<span class="badge b-teslim">${uretim.fabrika}</span>`:'<span class="badge b-bekl">Girilmedi</span>'}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  const bEl=document.getElementById('satis-bekl-liste');
+  const gEl=document.getElementById('satis-giril-liste');
+  if(!bEl||!gEl) return;
+  // Yeniden eskiye sırala (tarih desc, aynı tarihte id desc)
+  const sirali=[...D.satis].sort((a,b)=>b.tarih.localeCompare(a.tarih)||(b.id>a.id?1:-1));
+  const bekleyenler=sirali.filter(s=>!D.uretim.find(u=>u.satisRef===s.id));
+  const girilenler=sirali.filter(s=>!!D.uretim.find(u=>u.satisRef===s.id));
+  // Badge güncelle
+  const sayi_el=document.getElementById('stab-giril-sayi');
+  if(sayi_el) sayi_el.textContent=girilenler.length;
+  // Bekleyenler (her zaman render)
+  bEl.innerHTML=bekleyenler.length
+    ? bekleyenler.map(_sipKartHtml).join('')
+    : '<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:8px 0">Tüm siparişlere üretim girilmiş 🎉</div>';
+  // Girilenler (sadece sekme aktifse render)
+  if(_satisAktifSekme==='giril'){
+    gEl.innerHTML=girilenler.length
+      ? girilenler.map(_sipKartHtml).join('')
+      : '<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:8px 0">Henüz üretim girilmiş sipariş yok</div>';
+  }
 }
 
 function temSatis(){
@@ -1131,104 +1194,136 @@ function ekUretim(){
   kaydet('uretim');renderSatisListe();renderUretimListe();guncUretimRef();temUretim();
 }
 
-function renderUretimListe(){
-  const el=document.getElementById('uretim-liste');
-  if(!D.uretim.length){el.innerHTML='<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px">Henüz üretim kaydı yok</div>';return}
-  el.innerHTML=D.uretim.map((r,i)=>{
-    const fazlalar=r.urunler.filter(u=>(u.uretimMiktar||0)>(u.sipMiktar||0));
-    const fazlaHtml=fazlalar.length?`
-      <div style="margin-top:10px;padding:10px 12px;background:#182200;border:1px solid #2e4a00;border-radius:8px">
-        <div class="fazla-box-title">⚠ Fazla Üretim</div>
-        ${fazlalar.map(u=>{
-          const fazla=+(u.uretimMiktar-u.sipMiktar).toFixed(2);
-          const fazlaMaliyet=+(u.alisbirim*fazla*(u.kur||0)).toFixed(2);
-          const fazlaDov=+(u.alisbirim*fazla).toFixed(2);
-          return `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:7px 0;border-bottom:1px solid #2a3800">
+// Üretim kart HTML üretici (yardımcı)
+function _ureKartHtml(r){
+  const fazlalar=r.urunler.filter(u=>(u.uretimMiktar||0)>(u.sipMiktar||0));
+  const fazlaHtml=fazlalar.length?`
+    <div style="margin-top:10px;padding:10px 12px;background:#182200;border:1px solid #2e4a00;border-radius:8px">
+      <div class="fazla-box-title">⚠ Fazla Üretim</div>
+      ${fazlalar.map(u=>{
+        const fazla=+(u.uretimMiktar-u.sipMiktar).toFixed(2);
+        const fazlaMaliyet=+(u.alisbirim*fazla*(u.kur||0)).toFixed(2);
+        const fazlaDov=+(u.alisbirim*fazla).toFixed(2);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:7px 0;border-bottom:1px solid #2a3800">
+          <div>
+            <span style="font-size:12px;font-weight:700;color:var(--text)">${u.urun}${u.renkKod?' / '+u.renkKod:''}</span>
+            <span style="font-size:12px;color:#a3e635;font-weight:700;margin-left:10px">+${fmt(fazla)} m fazla</span>
+            <span style="font-size:11px;color:var(--text2);margin-left:8px">Maliyet: ${fmt(fazlaDov,2)} ${r.dovTur} / ₺${fmt(fazlaMaliyet)}</span>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-xs" style="background:#1E40AF;color:#fff;border-color:var(--blue)" onclick="fazlaStok('${r.id}','${u.urun}','${u.renkKod||''}',${fazla})">Stoğa At</button>
+            <button class="btn btn-red btn-xs" onclick="fazlaIade('${r.id}','${u.urun}','${u.renkKod||''}',${fazla},${u.alisbirim},${u.kur||0},${fazlaMaliyet})">İade Et</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`:''
+  const eksikler=r.urunler.filter(u=>(u.uretimMiktar||0)<(u.sipMiktar||0));
+  const topEksik=eksikler.reduce((a,u)=>a+((u.sipMiktar||0)-(u.uretimMiktar||0)),0);
+  const eksikRozet=eksikler.length?`<span style="background:#2a0f0f;color:var(--red);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u26a0 ${fmt(topEksik)} m eksik</span>`:'';
+  const tamRozet=!eksikler.length&&!fazlalar.length?`<span style="background:#052e16;color:var(--green);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u2713 Tam</span>`:'';
+  const iadeKayitlari=(D.iadeler||[]).filter(x=>x.uretimRef===r.id);
+  return `<div class="sip-kart">
+    <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:13px;font-weight:800;color:var(--acc)">${r.musteri}</span>
+          <span class="badge b-teslim">${r.fabrika}</span>
+          ${eksikRozet}${tamRozet}
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:3px">
+          ${r.urunler.length} ürün &nbsp;·&nbsp; Borç: <strong style="color:var(--red)">₺${fmt(r.topTL||0)}</strong> &nbsp;·&nbsp; ${r.zaman}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">
+        <button class="btn btn-xs" onclick="editUretim('${r.id}')">Düzenle</button>
+        <button class="btn btn-red btn-xs" onclick="silUretim('${r.id}')">Sil</button>
+        <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">\u25be</span>
+      </div>
+    </div>
+    <div class="sip-kart-body">
+      <div class="tbl-wrap">
+        <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Sipariş(m)</th><th>Üretim(m)</th><th>Fark(m)</th><th>Alış (${r.dovTur})</th><th>Kur</th><th>Toplam Döviz</th><th>Toplam Borç TL</th></tr></thead>
+        <tbody>${r.urunler.map(u=>{
+          const fark=+((u.uretimMiktar||0)-(u.sipMiktar||0)).toFixed(2);
+          const farkRenk=fark>0?'#a3e635':fark<0?'#f87171':'#8a95a3';
+          return `<tr>
+            <td>${u.urun}</td><td>${u.renkKod||'-'}</td>
+            <td>${fmt(u.sipMiktar)}</td>
+            <td style="font-weight:700">${fmt(u.uretimMiktar)}</td>
+            <td style="font-weight:700;color:${farkRenk}">${fark>=0?'+':''  }${fmt(fark)}</td>
+            <td>${fmt(u.alisbirim,4)} ${r.dovTur}</td>
+            <td>${fmt(u.kur||0)} ₺</td>
+            <td style="color:var(--red);font-weight:700">${fmt(u.alisDov||0)} ${r.dovTur}</td>
+            <td style="color:var(--red);font-weight:700">₺${fmt(u.alisTL||0)}</td>
+          </tr>`;
+        }).join('')}</tbody></table>
+      </div>
+      <div style="font-size:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+        Toplam Döviz: <strong style="color:var(--red)">${fmt(r.topDov)} ${r.dovTur}</strong>
+        &nbsp;·&nbsp; Toplam Borç TL: <strong style="color:var(--red)">₺${fmt(r.topTL||0)}</strong>
+      </div>
+      ${fazlaHtml}
+      ${iadeKayitlari.length?'<div style="margin-top:10px;padding:10px 14px;background:#080e1c;border:1px solid var(--border);border-radius:8px">'+
+        '<div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">İade Kayıtları</div>'+
+        iadeKayitlari.map(iade=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 0;border-bottom:1px solid var(--border)">
             <div>
-              <span style="font-size:12px;font-weight:700;color:var(--text)">${u.urun}${u.renkKod?' / '+u.renkKod:''}</span>
-              <span style="font-size:12px;color:#a3e635;font-weight:700;margin-left:10px">+${fmt(fazla)} m fazla</span>
-              <span style="font-size:11px;color:var(--text2);margin-left:8px">Maliyet: ${fmt(fazlaDov,2)} ${r.dovTur} / ₺${fmt(fazlaMaliyet)}</span>
+              <span style="font-size:12px;font-weight:700;color:var(--text)">${iade.urun}${iade.renkKod?' / '+iade.renkKod:''}</span>
+              <span style="font-size:11px;color:var(--text2);margin-left:8px">${iade.tarih}</span>
+              <span style="font-size:11px;color:var(--red);font-weight:700;margin-left:8px">&#8722;${fmt(iade.miktar)} m iade</span>
+              ${iade.acik?`<span style="font-size:11px;color:var(--text3);margin-left:6px">· ${iade.acik}</span>`:''}
             </div>
-            <div style="display:flex;gap:6px">
-              <button class="btn btn-xs" style="background:#1E40AF;color:#fff;border-color:var(--blue)" onclick="fazlaStok('${r.id}','${u.urun}','${u.renkKod||''}',${fazla})">Stoğa At</button>
-              <button class="btn btn-red btn-xs" onclick="fazlaIade('${r.id}','${u.urun}','${u.renkKod||''}',${fazla},${u.alisbirim},${u.kur||0},${fazlaMaliyet})">İade Et</button>
+            <div style="display:flex;gap:6px;align-items:center">
+              <span style="font-size:12px;font-weight:700;color:var(--red)">₺${fmt(iade.maliyet)} düşüldü</span>
+              <button class="btn btn-xs" style="background:#0c1e3d;color:var(--blue);border-color:#1a3a6e" onclick="iadeFisGoster('${iade.id}')">📄 Fişi Gör</button>
+              <button class="btn btn-red btn-xs" onclick="silIade('${iade.id}','${r.id}')">Sil</button>
             </div>
-          </div>`;
-        }).join('')}
-      </div>`:'';
-    // Eksik üretim hesapla
-    const eksikler=r.urunler.filter(u=>(u.uretimMiktar||0)<(u.sipMiktar||0));
-    const topEksik=eksikler.reduce((a,u)=>a+((u.sipMiktar||0)-(u.uretimMiktar||0)),0);
-    const eksikRozet=eksikler.length?`<span style="background:#2a0f0f;color:var(--red);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u26a0 ${fmt(topEksik)} m eksik</span>`:'';
-    const tamRozet=!eksikler.length&&!fazlalar.length?`<span style="background:#052e16;color:var(--green);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u2713 Tam</span>`:'';
-    return `<div class="sip-kart">
-      <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:13px;font-weight:800;color:var(--acc)">${r.musteri}</span>
-            <span class="badge b-teslim">${r.fabrika}</span>
-            ${eksikRozet}${tamRozet}
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-top:3px">
-            ${r.urunler.length} \u00fcr\u00fcn &nbsp;\u00b7&nbsp; Bor\u00e7: <strong style="color:var(--red)">\u20ba${fmt(r.topTL||0)}</strong> &nbsp;\u00b7&nbsp; ${r.zaman}
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">
-          <button class="btn btn-xs" onclick="editUretim('${r.id}')">D\u00fczenle</button>
-          <button class="btn btn-red btn-xs" onclick="silUretim('${r.id}')">Sil</button>
-          <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">\u25be</span>
-        </div>
-      </div>
-      <div class="sip-kart-body">
-        <div class="tbl-wrap">
-          <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Sipariş(m)</th><th>Üretim(m)</th><th>Fark(m)</th><th>Alış (${r.dovTur})</th><th>Kur</th><th>Toplam Döviz</th><th>Toplam Borç TL</th></tr></thead>
-          <tbody>${r.urunler.map(u=>{
-            const fark=+((u.uretimMiktar||0)-(u.sipMiktar||0)).toFixed(2);
-            const farkRenk=fark>0?'#a3e635':fark<0?'#f87171':'#8a95a3';
-            return `<tr>
-              <td>${u.urun}</td><td>${u.renkKod||'-'}</td>
-              <td>${fmt(u.sipMiktar)}</td>
-              <td style="font-weight:700">${fmt(u.uretimMiktar)}</td>
-              <td style="font-weight:700;color:${farkRenk}">${fark>=0?'+':''}${fmt(fark)}</td>
-              <td>${fmt(u.alisbirim,4)} ${r.dovTur}</td>
-              <td>${fmt(u.kur||0)} ₺</td>
-              <td style="color:var(--red);font-weight:700">${fmt(u.alisDov||0)} ${r.dovTur}</td>
-              <td style="color:var(--red);font-weight:700">₺${fmt(u.alisTL||0)}</td>
-            </tr>`;
-          }).join('')}</tbody></table>
-        </div>
-        <div style="font-size:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
-          Toplam Döviz: <strong style="color:var(--red)">${fmt(r.topDov)} ${r.dovTur}</strong>
-          &nbsp;·&nbsp; Toplam Borç TL: <strong style="color:var(--red)">₺${fmt(r.topTL||0)}</strong>
-        </div>
-        ${fazlaHtml}
-        ${(()=>{
-          if(!D.iadeler)return'';
-          const iadeListesi=(D.iadeler||[]).filter(x=>x.uretimRef===r.id);
-          if(!iadeListesi.length)return'';
-          return '<div style="margin-top:10px;padding:10px 14px;background:#080e1c;border:1px solid var(--border);border-radius:8px">'+
-            '<div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">İade Kayıtları</div>'+
-            iadeListesi.map(iade=>`
-              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 0;border-bottom:1px solid var(--border)">
-                <div>
-                  <span style="font-size:12px;font-weight:700;color:var(--text)">${iade.urun}${iade.renkKod?' / '+iade.renkKod:''}</span>
-                  <span style="font-size:11px;color:var(--text2);margin-left:8px">${iade.tarih}</span>
-                  <span style="font-size:11px;color:var(--red);font-weight:700;margin-left:8px">&#8722;${fmt(iade.miktar)} m iade</span>
-                  ${iade.acik?`<span style="font-size:11px;color:var(--text3);margin-left:6px">· ${iade.acik}</span>`:''}
-                </div>
-                <div style="display:flex;gap:6px;align-items:center">
-                  <span style="font-size:12px;font-weight:700;color:var(--red)">₺${fmt(iade.maliyet)} düşüldü</span>
-                  <button class="btn btn-xs" style="background:#0c1e3d;color:var(--blue);border-color:#1a3a6e" onclick="iadeFisGoster('${iade.id}')">📄 Fişi Gör</button>
-                  <button class="btn btn-red btn-xs" onclick="silIade('${iade.id}','${r.id}')">Sil</button>
-                </div>
-              </div>`).join('')+
-            '</div>';
-        })()}
-      </div>
-    </div>`;
-  }).join('');
+          </div>`).join('')+
+        '</div>':''}
+    </div>
+  </div>`;
 }
 
+let _uretimAktifSekme='devam';
+function uretimSekme(s){
+  _uretimAktifSekme=s;
+  document.getElementById('utab-devam').className='stab'+(s==='devam'?' stab-active':'');
+  document.getElementById('utab-tam').className='stab'+(s==='tam'?' stab-active':'');
+  document.getElementById('uretim-tam-liste').style.display=s==='tam'?'block':'none';
+  document.getElementById('uretim-devam-liste').style.display=s==='devam'?'block':'none';
+  renderUretimListe();
+}
+
+function renderUretimListe(){
+  const dEl=document.getElementById('uretim-devam-liste');
+  const tEl=document.getElementById('uretim-tam-liste');
+  if(!dEl||!tEl) return;
+  // Üretimi tamamlanmış = siparisin teslim durumu Tamamlandı
+  // Devam eden = henüz tamamlanmamış
+  // Eskiden yeniye sırala devam edenler (kullanıcı isteği)
+  const sirali=[...D.uretim].sort((a,b)=>a.id>b.id?1:-1);
+  const devamEdenler=sirali.filter(r=>{
+    const ds=siparisDurum(r.satisRef);
+    return ds.durum!=='Tamamlandı';
+  });
+  const tamamlananlar=sirali.filter(r=>{
+    const ds=siparisDurum(r.satisRef);
+    return ds.durum==='Tamamlandı';
+  });
+  // Badge güncelle
+  const sayi_el=document.getElementById('utab-tam-sayi');
+  if(sayi_el) sayi_el.textContent=tamamlananlar.length;
+  // Devam edenler (her zaman render, her zaman görünür)
+  dEl.innerHTML=devamEdenler.length
+    ? devamEdenler.map(_ureKartHtml).join('')
+    : '<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:8px 0">Devam eden üretim kaydı yok</div>';
+  // Tamamlananlar (sadece sekme aktifse render)
+  if(_uretimAktifSekme==='tam'){
+    tEl.innerHTML=tamamlananlar.length
+      ? tamamlananlar.map(_ureKartHtml).join('')
+      : '<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:8px 0">Tamamlanmış üretim kaydı yok</div>';
+  }
+}
 function editUretim(id){
   const r=D.uretim.find(x=>x.id===id);
   if(!r)return;
@@ -1441,89 +1536,121 @@ function ekTeslimat(){
   kaydet('teslimat');renderTeslimatListe();guncTeslimatRef();temTeslimat();
 }
 
+// Teslimat grup kart HTML üretici (yardımcı)
+function _tesGrupKartHtml(satisRef, teslimler){
+  const s=D.satis.find(x=>x.id===satisRef);
+  const ds=siparisDurum(satisRef);
+  const durumCl=ds.durum==='Tamamlandı'?'b-teslim':ds.durum==='Devam Ediyor'?'b-kismi':'b-bekl';
+  const durumRenk=ds.durum==='Tamamlandı'?'var(--green)':ds.durum==='Devam Ediyor'?'var(--acc)':'var(--text3)';
+  const topAlacak=teslimler.reduce((a,t)=>a+(t.topAlacakTL!=null?t.topAlacakTL:(t.urunler||[]).reduce((b,u)=>b+(u.alacakTL||u.topBorc||0),0)),0);
+  return `<div class="sip-kart" style="margin-bottom:14px">
+    <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:13px;font-weight:800;color:var(--acc)">${s?s.musteri:teslimler[0].musteri}</span>
+          <span class="badge ${durumCl}">${ds.durum}</span>
+          <span style="font-size:11px;color:var(--text2)">${ds.yuzde}% tamamlandı · ${ds.teslimSayisi} teslimat</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-top:3px">
+          Sipariş: ${fmt(ds.topSiparis)} m &nbsp;·&nbsp;
+          Teslim: <strong style="color:var(--green)">${fmt(ds.topTeslim)} m</strong> &nbsp;·&nbsp;
+          Alacak: <strong style="color:var(--green)">₺${fmt(topAlacak)}</strong>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">▾</span>
+      </div>
+    </div>
+    <div class="sip-kart-body">
+      ${teslimler.map((r,ti)=>{
+        const dc={Beklemede:'b-bekl','Teslim Edildi':'b-teslim','Kısmi Teslimat':'b-kismi','Tamamlandı':'b-teslim'}[r.durum]||'b-bekl';
+        const topAl=r.topAlacakTL!=null?r.topAlacakTL:(r.urunler||[]).reduce((a,u)=>a+(u.alacakTL||u.topBorc||0),0);
+        const gc=r.gun===null?'':r.gun<=7?`<span style="background:#052e16;color:var(--green);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
+          r.gun<=30?`<span style="background:#2a1800;color:var(--acc);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
+          `<span style="background:#2a0f0f;color:var(--red);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`;
+        return `<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden">
+          <div style="padding:8px 12px;background:var(--bg1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px">
+              <span style="font-weight:700;color:var(--text2)">${ti+1}. Teslimat</span>
+              <span style="color:var(--text3)">${r.teslimTarih}</span>
+              ${gc}
+              <span class="badge ${dc}">${r.durum}</span>
+            </div>
+            <div style="display:flex;gap:6px">
+              <span style="font-size:12px;font-weight:700;color:var(--green)">₺${fmt(topAl)}</span>
+              <button class="btn btn-xs" onclick="editTeslimat('${r.id}')">Düzenle</button>
+              <button class="btn btn-red btn-xs" onclick="silTeslimat('${r.id}')">Sil</button>
+            </div>
+          </div>
+          <div style="padding:10px 12px">
+            <div class="tbl-wrap">
+              <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Teslim(m)</th><th>Satış Birim</th><th>Kur</th><th>Alacak TL</th></tr></thead>
+              <tbody>${r.urunler.map(u=>{
+                const birim=u.satisbirim||u.alisbirim||0;
+                const alacak=u.alacakTL||u.topBorc||0;
+                return `<tr>
+                  <td>${u.urun}</td><td>${u.renkKod||'-'}</td>
+                  <td style="font-weight:700">${fmt(u.teslimMiktar)} m</td>
+                  <td style="color:var(--acc)">${fmt(birim,4)} ${r.dovTur}</td>
+                  <td style="color:var(--text2)">${fmt(u.kur||0)} ₺</td>
+                  <td style="font-weight:800;color:var(--green)">₺${fmt(alacak)}</td>
+                </tr>`;
+              }).join('')}</tbody></table>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+      ${ds.durum!=='Tamamlandı'?`<div style="padding:8px;background:#0a1a00;border:1px dashed var(--green);border-radius:8px;text-align:center;font-size:12px;color:var(--green)">
+        Kalan: <strong>${fmt(ds.topSiparis-ds.topTeslim)} m</strong> — Satış/Teslim sekmesinden yeni teslimat girebilirsin
+      </div>`:''}
+    </div>
+  </div>`;
+}
+
+let _teslimatAktifSekme='devam';
+function teslimatSekme(s){
+  _teslimatAktifSekme=s;
+  document.getElementById('ttab-devam').className='stab'+(s==='devam'?' stab-active':'');
+  document.getElementById('ttab-tam').className='stab'+(s==='tam'?' stab-active':'');
+  document.getElementById('teslimat-tam-liste').style.display=s==='tam'?'block':'none';
+  document.getElementById('teslimat-devam-liste').style.display=s==='devam'?'block':'none';
+  renderTeslimatListe();
+}
+
 function renderTeslimatListe(){
-  const el=document.getElementById('teslimat-liste');
-  if(!D.teslimat.length){el.innerHTML='<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px">Henüz satış/teslim kaydı yok</div>';return}
-  
+  const dEl=document.getElementById('teslimat-devam-liste');
+  const tEl=document.getElementById('teslimat-tam-liste');
+  if(!dEl||!tEl) return;
+  if(!D.teslimat.length){
+    dEl.innerHTML='<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:8px 0">Henüz satış/teslim kaydı yok</div>';
+    return;
+  }
   // Sipariş bazında grupla
   const gruplar={};
   D.teslimat.forEach(t=>{
     if(!gruplar[t.satisRef]) gruplar[t.satisRef]=[];
     gruplar[t.satisRef].push(t);
   });
-  
-  el.innerHTML=Object.entries(gruplar).map(([satisRef,teslimler])=>{
-    const s=D.satis.find(x=>x.id===satisRef);
-    const ds=siparisDurum(satisRef);
-    const durumCl=ds.durum==='Tamamlandı'?'b-teslim':ds.durum==='Devam Ediyor'?'b-kismi':'b-bekl';
-    const durumRenk=ds.durum==='Tamamlandı'?'var(--green)':ds.durum==='Devam Ediyor'?'var(--acc)':'var(--text3)';
-    const topAlacak=teslimler.reduce((a,t)=>a+(t.topAlacakTL!=null?t.topAlacakTL:(t.urunler||[]).reduce((b,u)=>b+(u.alacakTL||u.topBorc||0),0)),0);
-    
-    return `<div class="sip-kart" style="margin-bottom:14px">
-      <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span style="font-size:13px;font-weight:800;color:var(--acc)">${s?s.musteri:teslimler[0].musteri}</span>
-            <span class="badge ${durumCl}">${ds.durum}</span>
-            <span style="font-size:11px;color:var(--text2)">${ds.yuzde}% tamamlandı · ${ds.teslimSayisi} teslimat</span>
-          </div>
-          <div style="font-size:11px;color:var(--text2);margin-top:3px">
-            Sipariş: ${fmt(ds.topSiparis)} m &nbsp;·&nbsp;
-            Teslim: <strong style="color:var(--green)">${fmt(ds.topTeslim)} m</strong> &nbsp;·&nbsp;
-            Alacak: <strong style="color:var(--green)">₺${fmt(topAlacak)}</strong>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">▾</span>
-        </div>
-      </div>
-      <div class="sip-kart-body">
-        ${teslimler.map((r,ti)=>{
-          const dc={Beklemede:'b-bekl','Teslim Edildi':'b-teslim','Kısmi Teslimat':'b-kismi','Tamamlandı':'b-teslim'}[r.durum]||'b-bekl';
-          const topAl=r.topAlacakTL!=null?r.topAlacakTL:(r.urunler||[]).reduce((a,u)=>a+(u.alacakTL||u.topBorc||0),0);
-          const gc=r.gun===null?'':r.gun<=7?`<span style="background:#052e16;color:var(--green);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
-            r.gun<=30?`<span style="background:#2a1800;color:var(--acc);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
-            `<span style="background:#2a0f0f;color:var(--red);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`;
-          return `<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden">
-            <div style="padding:8px 12px;background:var(--bg1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-              <div style="display:flex;align-items:center;gap:8px;font-size:12px">
-                <span style="font-weight:700;color:var(--text2)">${ti+1}. Teslimat</span>
-                <span style="color:var(--text3)">${r.teslimTarih}</span>
-                ${gc}
-                <span class="badge ${dc}">${r.durum}</span>
-              </div>
-              <div style="display:flex;gap:6px">
-                <span style="font-size:12px;font-weight:700;color:var(--green)">₺${fmt(topAl)}</span>
-                <button class="btn btn-xs" onclick="editTeslimat('${r.id}')">Düzenle</button>
-                <button class="btn btn-red btn-xs" onclick="silTeslimat('${r.id}')">Sil</button>
-              </div>
-            </div>
-            <div style="padding:10px 12px">
-              <div class="tbl-wrap">
-                <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Teslim(m)</th><th>Satış Birim</th><th>Kur</th><th>Alacak TL</th></tr></thead>
-                <tbody>${r.urunler.map(u=>{
-                  const birim=u.satisbirim||u.alisbirim||0;
-                  const alacak=u.alacakTL||u.topBorc||0;
-                  return `<tr>
-                    <td>${u.urun}</td><td>${u.renkKod||'-'}</td>
-                    <td style="font-weight:700">${fmt(u.teslimMiktar)} m</td>
-                    <td style="color:var(--acc)">${fmt(birim,4)} ${r.dovTur}</td>
-                    <td style="color:var(--text2)">${fmt(u.kur||0)} ₺</td>
-                    <td style="font-weight:800;color:var(--green)">₺${fmt(alacak)}</td>
-                  </tr>`;
-                }).join('')}</tbody></table>
-              </div>
-            </div>
-          </div>`;
-        }).join('')}
-        ${ds.durum!=='Tamamlandı'?`<div style="padding:8px;background:#0a1a00;border:1px dashed var(--green);border-radius:8px;text-align:center;font-size:12px;color:var(--green)">
-          Kalan: <strong>${fmt(ds.topSiparis-ds.topTeslim)} m</strong> — Satış/Teslim sekmesinden yeni teslimat girebilirsin
-        </div>`:''}
-      </div>
-    </div>`;
-  }).join('');
+  // Tamamlanma durumuna göre ayır
+  const devamGruplar={};
+  const tamGruplar={};
+  Object.entries(gruplar).forEach(([ref,teslimler])=>{
+    const ds=siparisDurum(ref);
+    if(ds.durum==='Tamamlandı') tamGruplar[ref]=teslimler;
+    else devamGruplar[ref]=teslimler;
+  });
+  // Badge güncelle
+  const sayi_el=document.getElementById('ttab-tam-sayi');
+  if(sayi_el) sayi_el.textContent=Object.keys(tamGruplar).length;
+  // Devam edenler (her zaman render)
+  const devamHtml=Object.entries(devamGruplar).map(([r,t])=>_tesGrupKartHtml(r,t)).join('');
+  dEl.innerHTML=devamHtml||'<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:8px 0">Devam eden teslimat yok</div>';
+  // Tamamlananlar (sadece sekme aktifse render)
+  if(_teslimatAktifSekme==='tam'){
+    const tamHtml=Object.entries(tamGruplar).map(([r,t])=>_tesGrupKartHtml(r,t)).join('');
+    tEl.innerHTML=tamHtml||'<div class="empty" style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin:8px 0">Tamamlanmış teslimat yok</div>';
+  }
 }
-
 function editTeslimat(id){
   const r=D.teslimat.find(x=>x.id===id);
   if(!r)return;
