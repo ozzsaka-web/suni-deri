@@ -573,6 +573,7 @@ tr:hover td{background:#000080;color:#fff}
 // ============================================================
 const SYNC_URL = 'https://script.google.com/macros/s/AKfycbxzBsoSxkm8YHhe7NlxzL_trZdosUtZvfTyffQaOp95fyt4L76K-vxagxSEcDXkjGFlHQ/exec';
 let _syncTimer = null;
+let _sheetsHazir = false; // Sheets'ten ilk yükleme tamamlanana kadar sync yapma
 
 let D={
   satis:   JSON.parse(localStorage.getItem('sd4_satis')||'[]'),
@@ -588,7 +589,8 @@ let D={
 
 function kaydet(t){
   localStorage.setItem('sd4_'+t, JSON.stringify(D[t]));
-  // Debounce: 2 saniye bekle, ardından Google Sheets'e kaydet
+  // Sheets yüklemesi tamamlanmadan sync yapma — veri kaybını önler
+  if(!_sheetsHazir) return;
   clearTimeout(_syncTimer);
   _syncTimer = setTimeout(()=>syncToSheets(), 2000);
 }
@@ -634,15 +636,18 @@ function loadFromSheets(){
           if(!D[t]) D[t]=[];
           localStorage.setItem('sd4_'+t,JSON.stringify(D[t]));
         });
+        _sheetsHazir = true; // Artık sync yapılabilir
         if(durum){durum.textContent='✓ Güncellendi';durum.style.color='var(--green)';setTimeout(function(){if(durum)durum.textContent='';},3000);}
         return true;
       } else {
+        _sheetsHazir = true; // Sheets'ten geçersiz yanıt — local ile devam
         if(durum) durum.textContent='';
         return false;
       }
     })
     .catch(function(){
       if(durum){durum.textContent='Çevrimdışı';durum.style.color='var(--text3)';}
+      _sheetsHazir = true; // Çevrimdışıysa local veriyle devam et, sync açık kalsın
       return false;
     });
 }
