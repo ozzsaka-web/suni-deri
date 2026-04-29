@@ -24,7 +24,7 @@
   --purple:#800080;
   --muted:#808080;
 }
-body{font-family:'MS Sans Serif',Tahoma,Arial,sans-serif;background:var(--bg0);color:var(--text);font-size:13px;line-height:1.4}
+body{font-family:'MS Sans Serif',Tahoma,Arial,sans-serif;background:var(--bg0);color:#000000;font-size:13px;line-height:1.4}
 
 /* ── Topbar ── */
 .topbar{background:linear-gradient(90deg,#000080,#1084d0);padding:3px 6px;height:auto;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:2px solid #808080}
@@ -48,7 +48,7 @@ body{font-family:'MS Sans Serif',Tahoma,Arial,sans-serif;background:var(--bg0);c
 
 /* ── Forms ── */
 .fg{display:flex;flex-direction:column;gap:5px}
-label.lbl{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
+label.lbl{font-size:10px;font-weight:700;color:#404040;text-transform:uppercase;letter-spacing:0.5px}
 input,select,textarea{padding:4px 6px;font-size:12px;border:2px solid;border-color:#808080 #fff #fff #808080;border-radius:0;background:#fff;color:#000;width:100%;-webkit-appearance:none;text-transform:uppercase;font-family:'MS Sans Serif',Tahoma,Arial,sans-serif}
 input:focus,select:focus,textarea:focus{outline:1px dotted #000080}
 input.auto{background:#e0e0e0;color:#606060;border-color:#808080 #fff #fff #808080;text-transform:uppercase}
@@ -84,12 +84,12 @@ select{cursor:pointer}
 /* ── Section header ── */
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
 .stab-wrap{display:flex;align-items:flex-end;gap:0;flex:1;min-width:0}
-.stab{background:#a0a0a0;color:#000;border:1px solid;border-color:#fff #808080 #808080 #fff;border-bottom:none;padding:3px 12px;font-size:11px;font-weight:600;cursor:pointer;border-radius:0;text-transform:uppercase;white-space:nowrap}
-.stab.stab-active{background:#c0c0c0;color:#000080;font-weight:700}
+.stab{background:#a0a0a0;color:#000;border:1px solid;border-color:#fff #808080 #808080 #fff;border-bottom:none;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer;border-radius:0;text-transform:uppercase;white-space:nowrap}
+.stab.stab-active{background:#c0c0c0;color:#000080;font-weight:700;border-bottom:2px solid #c0c0c0}
 .stab:hover:not(.stab-active){background:#b0b0b0}
 .stab-badge{display:inline-block;background:#000080;color:#fff;border-radius:0;padding:0 5px;font-size:10px;margin-left:4px;font-weight:800}
 .sekme-panel{border:2px solid;border-color:#808080 #fff #fff #808080;padding:8px 0 0 0;margin-bottom:4px;background:#c0c0c0}
-.sh h3{font-size:13px;font-weight:700;color:var(--text)}
+.sh h3{font-size:13px;font-weight:700;color:#000000}
 
 /* ── Tables ── */
 .tbl-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
@@ -97,23 +97,23 @@ table{width:100%;border-collapse:collapse;font-size:12px;min-width:500px}
 th{padding:4px 8px;text-align:left;font-size:11px;font-weight:700;color:#000;text-transform:uppercase;letter-spacing:0.3px;border-bottom:2px solid #808080;background:#c0c0c0;white-space:nowrap}
 td{padding:3px 8px;border-bottom:1px solid #d0d0d0;color:#000;vertical-align:middle;background:#fff}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:#000080;color:#fff}
-.empty{text-align:center;padding:24px;color:var(--text3);font-size:12px}
+tr:hover td{background:#000080;color:#ffffff}
+.empty{text-align:center;padding:24px;color:#606060;font-size:12px}
 
 /* ── Badges ── */
-.badge{display:inline-block;padding:1px 6px;border-radius:0;font-size:11px;font-weight:700;letter-spacing:0.2px;border:1px solid #808080}
-.b-bekl{background:#fff8e0;color:#804000}
-.b-teslim{background:#e0fff0;color:#006400}
-.b-kismi{background:#e0e8ff;color:#000080}
+.badge{display:inline-block;padding:1px 7px;border-radius:0;font-size:11px;font-weight:700;letter-spacing:0.2px;border:1px solid}
+.b-bekl{background:#fff3cd;color:#5a3000;border-color:#d4a853}
+.b-teslim{background:#d4edda;color:#155724;border-color:#28a745}
+.b-kismi{background:#cce5ff;color:#004085;border-color:#4a90d9}
 
 /* ── Metric cards ── */
 .metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:16px}
 .mc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 12px;text-align:center}
-.mc-val{font-size:18px;font-weight:800;color:var(--text)}
-.mc-lbl{font-size:10px;color:var(--text2);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px}
+.mc-val{font-size:18px;font-weight:800;color:#000000}
+.mc-lbl{font-size:10px;color:#404040;margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px}
 .mc.featured{border-color:#000080;background:#e8e8ff}
 .mc.featured .mc-val{color:#000080}
-.mc-val.g{color:#006400}.mc-val.r{color:#800000}.mc-val.b{color:#000080}
+.mc-val.g{color:#155724;font-weight:800}.mc-val.r{color:#721c24;font-weight:800}.mc-val.b{color:#004085;font-weight:800}
 
 /* ── Sipariş kart ── */
 .sip-kart{background:#fff;border:2px solid;border-color:#808080 #fff #fff #808080;margin-bottom:6px;overflow:hidden}
@@ -124,13 +124,13 @@ tr:hover td{background:#000080;color:#fff}
 /* ── Ürün satırı ── */
 .urun-satir{display:grid;grid-template-columns:1.5fr 1fr 0.8fr 0.8fr auto;gap:8px;align-items:end;margin-bottom:8px;padding:10px 12px;background:var(--bg1);border:1px solid var(--border);border-radius:8px}
 .urun-satir-header{display:grid;grid-template-columns:1.5fr 1fr 0.8fr 0.8fr auto;gap:8px;padding:0 12px;margin-bottom:4px}
-.urun-satir-header span{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px}
+.urun-satir-header span{font-size:10px;font-weight:700;color:#606060;text-transform:uppercase;letter-spacing:0.4px}
 
 /* ── Stok satırı ── */
 .stok-satir{display:grid;grid-template-columns:1fr 1fr 0.8fr 130px auto;gap:8px;align-items:end;margin-bottom:8px;padding:10px 12px;background:var(--bg1);border:1px solid var(--border);border-radius:8px}
 .stok-radio{display:flex;gap:12px;align-items:center;padding:8px 0}
-.stok-radio label{font-size:12px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:5px;cursor:pointer;text-transform:none;letter-spacing:0}
-.stok-radio input[type=radio]{width:auto;accent-color:var(--acc)}
+.stok-radio label{font-size:12px;font-weight:600;color:#000000;display:flex;align-items:center;gap:5px;cursor:pointer;text-transform:none;letter-spacing:0}
+.stok-radio input[type=radio]{width:auto;accent-color:#804000}
 
 /* ── Akordion ── */
 .akord-item{border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
@@ -174,16 +174,16 @@ tr:hover td{background:#000080;color:#fff}
 
 /* ── Notebox ── */
 .notebox{background:#1a1500;border:1px solid #3a3000;border-radius:8px;padding:12px;margin-top:10px}
-.notebox label{font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:6px}
-.notebox textarea{background:transparent;border:none;resize:vertical;min-height:55px;font-size:13px;color:var(--acc);width:100%}
+.notebox label{font-size:10px;font-weight:700;color:#804000;text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:6px}
+.notebox textarea{background:transparent;border:none;resize:vertical;min-height:55px;font-size:13px;color:#804000;width:100%}
 .notebox textarea:focus{outline:none}
 
 /* ── Fihrist ── */
 .fih-blok{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
 .fih-item{background:var(--bg1);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;transition:border-color .15s}
 .fih-item:hover{border-color:var(--border2)}
-.fih-item-info{font-size:13px;font-weight:600;color:var(--text)}
-.fih-item-alt{font-size:11px;color:var(--text3);margin-top:2px}
+.fih-item-info{font-size:13px;font-weight:600;color:#000000}
+.fih-item-alt{font-size:11px;color:#606060;margin-top:2px}
 
 /* ── Cari ── */
 .cari-blok{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
@@ -225,26 +225,26 @@ tr:hover td{background:#000080;color:#fff}
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap">
     <div style="display:flex;align-items:center;gap:10px;font-family:'Courier New',monospace">
       <div style="text-align:center;cursor:pointer;line-height:1.2" onclick="kurKopyala('USD')" title="Tıkla → kur alanına yapıştır">
-        <div style="font-size:9px;color:var(--text3);letter-spacing:0.5px">USD/TL</div>
-        <div id="kur-usd-bugun" style="font-size:12px;font-weight:700;color:var(--acc)">—</div>
-        <div id="kur-usd-dun" style="font-size:9px;color:var(--text3)">dün: —</div>
+        <div style="font-size:9px;color:#c8d8f0;letter-spacing:0.5px">USD/TL</div>
+        <div id="kur-usd-bugun" style="font-size:12px;font-weight:700;color:#ffffff">—</div>
+        <div id="kur-usd-dun" style="font-size:9px;color:#b0c8e8">dün: —</div>
       </div>
       <div style="width:1px;height:28px;background:var(--border)"></div>
       <div style="text-align:center;cursor:pointer;line-height:1.2" onclick="kurKopyala('EUR')" title="Tıkla → kur alanına yapıştır">
-        <div style="font-size:9px;color:var(--text3);letter-spacing:0.5px">EUR/TL</div>
-        <div id="kur-eur-bugun" style="font-size:12px;font-weight:700;color:var(--acc)">—</div>
-        <div id="kur-eur-dun" style="font-size:9px;color:var(--text3)">dün: —</div>
+        <div style="font-size:9px;color:#c8d8f0;letter-spacing:0.5px">EUR/TL</div>
+        <div id="kur-eur-bugun" style="font-size:12px;font-weight:700;color:#ffffff">—</div>
+        <div id="kur-eur-dun" style="font-size:9px;color:#b0c8e8">dün: —</div>
       </div>
       <div style="text-align:center;cursor:pointer;line-height:1.2" onclick="kurGuncelle()" title="Yenile">
-        <div style="font-size:9px;color:var(--text3);letter-spacing:0.5px">ECB</div>
-        <div id="kur-saat" style="font-size:9px;color:var(--text3)">—</div>
-        <div id="kur-durum" style="font-size:9px;color:var(--text3)">↻</div>
+        <div style="font-size:9px;color:#c8d8f0;letter-spacing:0.5px">ECB</div>
+        <div id="kur-saat" style="font-size:9px;color:#c8d8f0">—</div>
+        <div id="kur-durum" style="font-size:9px;color:#90c8a0">↻</div>
       </div>
     </div>
     <div style="width:1px;height:28px;background:var(--border)"></div>
-    <span id="sync-durum" style="font-size:11px;color:var(--text2)"></span>
-    <button class="btn btn-sm" onclick="manuelSync()" style="font-size:11px;padding:4px 10px">⟳ Güncelle</button>
-    <span id="tarih-lbl" style="font-size:11px;color:var(--text3)"></span>
+    <span id="sync-durum" style="font-size:11px;color:#90e0a0;font-weight:700"></span>
+    <button class="btn btn-sm" onclick="manuelSync()" style="font-size:11px;padding:4px 10px;background:#1060b0;color:#fff;border-color:#fff #1060b0 #1060b0 #fff;font-weight:700">⟳ Güncelle</button>
+    <span id="tarih-lbl" style="font-size:11px;color:#ffffff;font-weight:600"></span>
   </div>
 </div>
 <div class="app-wrapper">
@@ -283,7 +283,7 @@ tr:hover td{background:#000080;color:#fff}
     </div>
     <div class="infobox" id="s-info">
       <div class="iv"><label>Toplam Döviz</label><span id="si-tdov">-</span></div>
-      <div class="iv"><label>Not</label><span style="color:var(--green);font-size:12px">TL, satış/teslimde kurla hesaplanır</span></div>
+      <div class="iv"><label>Not</label><span style="color:#006400;font-size:12px">TL, satış/teslimde kurla hesaplanır</span></div>
     </div>
     <div class="bgrp">
       <button class="btn btn-primary" onclick="ekSatis()">Sipariş Kaydet</button>
@@ -320,7 +320,7 @@ tr:hover td{background:#000080;color:#fff}
     </div>
     <!-- Üretim ürün satırları -->
     <div id="u-urun-detay" style="display:none">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px">Ürün Bazında Üretim Miktarı ve Alış Fiyatı (Döviz)</div>
+      <div style="font-size:11px;font-weight:700;color:#606060;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px">Ürün Bazında Üretim Miktarı ve Alış Fiyatı (Döviz)</div>
       <div id="u-urun-satirlar"></div>
     </div>
     <div id="u-info-box" style="display:none">
@@ -365,7 +365,7 @@ tr:hover td{background:#000080;color:#fff}
     </div>
     <!-- Teslim ürün detay + kur -->
     <div id="t-urun-detay" style="display:none"><div id="t-ozet" style="display:none"></div>
-      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px">Ürün Bazında Teslim Miktarı + Üretim Maliyeti Kurları</div>
+      <div style="font-size:11px;font-weight:700;color:#606060;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px">Ürün Bazında Teslim Miktarı + Üretim Maliyeti Kurları</div>
       <div id="t-urun-satirlar"></div>
     </div>
     <div class="bgrp">
@@ -411,7 +411,7 @@ tr:hover td{background:#000080;color:#fff}
 
 <!-- ===== KÂR PAYI ===== -->
 <div id="page-kar" class="page">
-  <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn btn-xs" style="background:#1a1500;color:var(--acc);border-color:#3a3000;font-size:12px;padding:7px 14px" onclick="karRaporGoster()">Rapor Al</button></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button class="btn btn-xs" style="background:#1a1500;color:#804000;border-color:#3a3000;font-size:12px;padding:7px 14px" onclick="karRaporGoster()">Rapor Al</button></div>
   <div id="kar-ozet"></div>
   <div class="sh" style="margin-top:4px"><h3>Aylık Giderler</h3>
     <button class="btn btn-primary btn-sm" onclick="yeniGiderAc()">+ Yeni Ay Ekle</button>
@@ -465,7 +465,7 @@ tr:hover td{background:#000080;color:#fff}
 <div id="page-stok" class="page">
   <div class="card">
     <div class="card-title">Yeni Stok Girişi</div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:10px">Fazla üretilen veya iade gelen ürünleri buraya kaydet. A1 = Standart Stok, B1 = 2. Kalite</div>
+    <div style="font-size:11px;color:#606060;margin-bottom:10px">Fazla üretilen veya iade gelen ürünleri buraya kaydet. A1 = Standart Stok, B1 = 2. Kalite</div>
     <div id="stok-satirlar"></div>
     <button class="btn btn-sm" style="margin-top:4px" onclick="stokSatirEkle()">+ Ürün Ekle</button>
     <div class="bgrp">
@@ -479,7 +479,7 @@ tr:hover td{background:#000080;color:#fff}
   <div class="sh">
     <h3>Stok Listesi</h3>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-sm" onclick="stokFiltre('tumu')" id="sf-tumu" style="border-color:var(--acc);color:var(--acc)">Tümü</button>
+      <button class="btn btn-sm" onclick="stokFiltre('tumu')" id="sf-tumu" style="border-color:#804000;color:#804000">Tümü</button>
       <button class="btn btn-sm" onclick="stokFiltre('A1')" id="sf-a1">A1 Stok</button>
       <button class="btn btn-sm" onclick="stokFiltre('B1')" id="sf-b1">B1 Kalite</button>
       <button class="btn btn-blue btn-sm" onclick="expCSV('stok')">CSV İndir</button>
@@ -741,7 +741,7 @@ function guncUrunDatalist(){
 function renderFihrist(){
   // Müşteriler
   const mEl=document.getElementById('fih-musteri-liste');
-  if(!D.musteriler.length){mEl.innerHTML='<div style="color:var(--text3);font-size:12px">Henüz müşteri yok</div>';}
+  if(!D.musteriler.length){mEl.innerHTML='<div style="color:#606060;font-size:12px">Henüz müşteri yok</div>';}
   else mEl.innerHTML=D.musteriler.map((m,i)=>`<div class="fih-item">
     <div><div class="fih-item-info">${m}</div></div>
     <button class="btn btn-red btn-xs" onclick="silMusteri(${i})">Sil</button>
@@ -749,7 +749,7 @@ function renderFihrist(){
 
   // Ürünler
   const uEl=document.getElementById('fih-urun-liste');
-  if(!D.urunler.length){uEl.innerHTML='<div style="color:var(--text3);font-size:12px">Henüz ürün yok</div>';}
+  if(!D.urunler.length){uEl.innerHTML='<div style="color:#606060;font-size:12px">Henüz ürün yok</div>';}
   else uEl.innerHTML=D.urunler.map((u,i)=>`<div class="fih-item">
     <div>
       <div class="fih-item-info">${u.ad}${u.renk?' / '+u.renk:''}</div>
@@ -864,19 +864,19 @@ function _sipKartHtml(s){
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span style="font-size:13px;font-weight:700">${s.tarih}</span>
-          <span style="font-size:13px;font-weight:800;color:var(--acc)">${s.musteri}</span>
+          <span style="font-size:13px;font-weight:800;color:#804000">${s.musteri}</span>
           ${uretimBadge}
         </div>
-        <div style="font-size:11px;color:var(--text2);margin-top:3px">
-          ${s.urunler.length} ürün &nbsp;·&nbsp; <strong style="color:var(--acc)">${topDovTxt}</strong> &nbsp;·&nbsp; TL teslimatta
+        <div style="font-size:11px;color:#404040;margin-top:3px">
+          ${s.urunler.length} ürün &nbsp;·&nbsp; <strong style="color:#804000">${topDovTxt}</strong> &nbsp;·&nbsp; TL teslimatta
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
-        <button class="btn btn-xs" style="background:#2a1800;color:#d4a853;border-color:#5a3a00" onclick="fisMusteriGoster('${s.id}')">Müşteri Fişi</button>
-        <button class="btn btn-xs" style="background:#101828;color:var(--blue);border-color:#1a3a6e" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
+        <button class="btn btn-xs" style="background:#c0c0c0;color:#804000;border-color:#fff #808080 #808080 #fff;font-weight:700" onclick="fisMusteriGoster('${s.id}')">Müşteri Fişi</button>
+        <button class="btn btn-xs" style="background:#101828;color:#000080;border-color:#1a3a6e" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
         <button class="btn btn-xs" onclick="editSatis('${s.id}')">Düzenle</button>
         <button class="btn btn-red btn-xs" onclick="silSatis('${s.id}')">Sil</button>
-        <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">▾</span>
+        <span class="sip-ok" style="font-size:16px;color:#606060;transition:transform .2s;display:inline-block">▾</span>
       </div>
     </div>
     <div class="sip-kart-body">
@@ -886,14 +886,14 @@ function _sipKartHtml(s){
           ${s.urunler.map(u=>`<tr>
             <td>${u.urun}</td><td>${u.renkKod||'-'}</td><td>${fmt(u.miktar)}</td>
             <td>${fmt(u.birim,4)} ${s.dovTur}</td>
-            <td style="font-weight:700;color:var(--acc)">${fmt(u.topDov)} ${s.dovTur}</td>
-            <td style="color:var(--muted);font-size:11px">TL → Satış/Teslim'de</td>
+            <td style="font-weight:700;color:#804000">${fmt(u.topDov)} ${s.dovTur}</td>
+            <td style="color:#808080;font-size:11px">TL → Satış/Teslim'de</td>
           </tr>`).join('')}
         </tbody></table>
       </div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
-        <span>Toplam: <strong style="color:var(--blue)">${fmt(s.topDov)} ${s.dovTur}</strong></span>
-        <span style="color:var(--muted);font-size:11px">TL, satış/teslimde kurla hesaplanır</span>
+        <span>Toplam: <strong style="color:#000080">${fmt(s.topDov)} ${s.dovTur}</strong></span>
+        <span style="color:#808080;font-size:11px">TL, satış/teslimde kurla hesaplanır</span>
         <span>Üretim: ${uretim?`<span class="badge b-teslim">${uretim.fabrika}</span>`:`<span class="badge b-bekl">Girilmedi</span>`}</span>
       </div>
     </div>
@@ -1126,9 +1126,9 @@ function uretimDoldur(){
     <div style="padding:10px;background:var(--bg1);border:1px solid var(--border);border-radius:8px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
         <div>
-          <span style="font-size:13px;font-weight:700;color:var(--acc)">${u.urun}</span>
-          ${u.renkKod?`<span style="font-size:12px;color:var(--text2);margin-left:6px">/ ${u.renkKod}</span>`:''}
-          <span style="font-size:11px;color:var(--text3);margin-left:8px">Sipari\u015f: ${fmt(u.miktar)} m</span>
+          <span style="font-size:13px;font-weight:700;color:#804000">${u.urun}</span>
+          ${u.renkKod?`<span style="font-size:12px;color:#404040;margin-left:6px">/ ${u.renkKod}</span>`:''}
+          <span style="font-size:11px;color:#606060;margin-left:8px">Sipari\u015f: ${fmt(u.miktar)} m</span>
         </div>
       </div>
       <div class="grid g4" style="gap:8px">
@@ -1148,8 +1148,8 @@ function uretimDoldur(){
           <input type="number" id="uu-kur-${i}" placeholder="0.00" step="0.01" oninput="hUretim()">
         </div>
       </div>
-      <div style="font-size:11px;color:var(--text3);margin-top:6px">
-        Bor\u00e7: <strong id="uu-tl-${i}" style="color:var(--red)">-</strong>
+      <div style="font-size:11px;color:#606060;margin-top:6px">
+        Bor\u00e7: <strong id="uu-tl-${i}" style="color:#800000">-</strong>
       </div>
     </div>`).join('');
   document.getElementById('u-urun-detay').style.display='block';
@@ -1224,12 +1224,12 @@ function _ureKartHtml(r){
         const fazlaDov=+(u.alisbirim*fazla).toFixed(2);
         return `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding:7px 0;border-bottom:1px solid #2a3800">
           <div>
-            <span style="font-size:12px;font-weight:700;color:var(--text)">${u.urun}${u.renkKod?' / '+u.renkKod:''}</span>
+            <span style="font-size:12px;font-weight:700;color:#000000">${u.urun}${u.renkKod?' / '+u.renkKod:''}</span>
             <span style="font-size:12px;color:#a3e635;font-weight:700;margin-left:10px">+${fmt(fazla)} m fazla</span>
-            <span style="font-size:11px;color:var(--text2);margin-left:8px">Maliyet: ${fmt(fazlaDov,2)} ${r.dovTur} / ₺${fmt(fazlaMaliyet)}</span>
+            <span style="font-size:11px;color:#404040;margin-left:8px">Maliyet: ${fmt(fazlaDov,2)} ${r.dovTur} / ₺${fmt(fazlaMaliyet)}</span>
           </div>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-xs" style="background:#1a3580;color:#fff;border-color:var(--blue)" onclick="fazlaStok('${r.id}','${u.urun}','${u.renkKod||''}',${fazla})">Stoğa At</button>
+            <button class="btn btn-xs" style="background:#1a3580;color:#fff;border-color:#000080" onclick="fazlaStok('${r.id}','${u.urun}','${u.renkKod||''}',${fazla})">Stoğa At</button>
             <button class="btn btn-red btn-xs" onclick="fazlaIade('${r.id}','${u.urun}','${u.renkKod||''}',${fazla},${u.alisbirim},${u.kur||0},${fazlaMaliyet})">İade Et</button>
           </div>
         </div>`;
@@ -1237,29 +1237,29 @@ function _ureKartHtml(r){
     </div>`:''
   const eksikler=r.urunler.filter(u=>(u.uretimMiktar||0)<(u.sipMiktar||0));
   const topEksik=eksikler.reduce((a,u)=>a+((u.sipMiktar||0)-(u.uretimMiktar||0)),0);
-  const eksikRozet=eksikler.length?`<span style="background:#1e1010;color:var(--red);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u26a0 ${fmt(topEksik)} m eksik</span>`:'';
-  const tamRozet=!eksikler.length&&!fazlalar.length?`<span style="background:#111c14;color:var(--green);padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u2713 Tam</span>`:'';
+  const eksikRozet=eksikler.length?`<span style="background:#1e1010;color:#800000;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u26a0 ${fmt(topEksik)} m eksik</span>`:'';
+  const tamRozet=!eksikler.length&&!fazlalar.length?`<span style="background:#111c14;color:#006400;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700">\u2713 Tam</span>`:'';
   const iadeKayitlari=(D.iadeler||[]).filter(x=>x.uretimRef===r.id);
   return `<div class="sip-kart">
     <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:13px;font-weight:800;color:var(--acc)">${r.musteri}</span>
+          <span style="font-size:13px;font-weight:800;color:#804000">${r.musteri}</span>
           <span class="badge b-teslim">${r.fabrika}</span>
           ${eksikRozet}${tamRozet}
         </div>
-        <div style="font-size:11px;color:var(--text2);margin-top:3px">
-          ${r.urunler.length} ürün &nbsp;·&nbsp; Borç: <strong style="color:var(--red)">₺${fmt(r.topTL||0)}</strong> &nbsp;·&nbsp; ${r.zaman}
+        <div style="font-size:11px;color:#404040;margin-top:3px">
+          ${r.urunler.length} ürün &nbsp;·&nbsp; Borç: <strong style="color:#800000">₺${fmt(r.topTL||0)}</strong> &nbsp;·&nbsp; ${r.zaman}
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
         <button class="btn btn-xs" onclick="editUretim('${r.id}')">Düzenle</button>
         ${r.tamam
-          ? `<button class="btn btn-xs" style="background:#1a2e10;color:var(--green);border-color:#2a4a1a" onclick="uretimBekleyeneAl('${r.id}')">↩ Bekleyene Al</button>`
-          : `<button class="btn btn-xs" style="background:#101828;color:var(--blue);border-color:#1a2e50" onclick="uretimTamamla('${r.id}')">✓ Tamamlandı</button>`
+          ? `<button class="btn btn-xs" style="background:#c0c0c0;color:#006400;border-color:#fff #808080 #808080 #fff;font-weight:700" onclick="uretimBekleyeneAl('${r.id}')">↩ Bekleyene Al</button>`
+          : `<button class="btn btn-xs" style="background:#c0c0c0;color:#000080;border-color:#fff #808080 #808080 #fff;font-weight:700" onclick="uretimTamamla('${r.id}')">✓ Tamamlandı</button>`
         }
         <button class="btn btn-red btn-xs" onclick="silUretim('${r.id}')">Sil</button>
-        <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">\u25be</span>
+        <span class="sip-ok" style="font-size:16px;color:#606060;transition:transform .2s;display:inline-block">\u25be</span>
       </div>
     </div>
     <div class="sip-kart-body">
@@ -1275,29 +1275,29 @@ function _ureKartHtml(r){
             <td style="font-weight:700;color:${farkRenk}">${fark>=0?'+':''  }${fmt(fark)}</td>
             <td>${fmt(u.alisbirim,4)} ${r.dovTur}</td>
             <td>${fmt(u.kur||0)} ₺</td>
-            <td style="color:var(--red);font-weight:700">${fmt(u.alisDov||0)} ${r.dovTur}</td>
-            <td style="color:var(--red);font-weight:700">₺${fmt(u.alisTL||0)}</td>
+            <td style="color:#800000;font-weight:700">${fmt(u.alisDov||0)} ${r.dovTur}</td>
+            <td style="color:#800000;font-weight:700">₺${fmt(u.alisTL||0)}</td>
           </tr>`;
         }).join('')}</tbody></table>
       </div>
       <div style="font-size:12px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
-        Toplam Döviz: <strong style="color:var(--red)">${fmt(r.topDov)} ${r.dovTur}</strong>
-        &nbsp;·&nbsp; Toplam Borç TL: <strong style="color:var(--red)">₺${fmt(r.topTL||0)}</strong>
+        Toplam Döviz: <strong style="color:#800000">${fmt(r.topDov)} ${r.dovTur}</strong>
+        &nbsp;·&nbsp; Toplam Borç TL: <strong style="color:#800000">₺${fmt(r.topTL||0)}</strong>
       </div>
       ${fazlaHtml}
       ${iadeKayitlari.length?'<div style="margin-top:10px;padding:10px 14px;background:#080e1c;border:1px solid var(--border);border-radius:8px">'+
-        '<div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">İade Kayıtları</div>'+
+        '<div style="font-size:10px;font-weight:700;color:#000080;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">İade Kayıtları</div>'+
         iadeKayitlari.map(iade=>`
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 0;border-bottom:1px solid var(--border)">
             <div>
-              <span style="font-size:12px;font-weight:700;color:var(--text)">${iade.urun}${iade.renkKod?' / '+iade.renkKod:''}</span>
-              <span style="font-size:11px;color:var(--text2);margin-left:8px">${iade.tarih}</span>
-              <span style="font-size:11px;color:var(--red);font-weight:700;margin-left:8px">&#8722;${fmt(iade.miktar)} m iade</span>
-              ${iade.acik?`<span style="font-size:11px;color:var(--text3);margin-left:6px">· ${iade.acik}</span>`:''}
+              <span style="font-size:12px;font-weight:700;color:#000000">${iade.urun}${iade.renkKod?' / '+iade.renkKod:''}</span>
+              <span style="font-size:11px;color:#404040;margin-left:8px">${iade.tarih}</span>
+              <span style="font-size:11px;color:#800000;font-weight:700;margin-left:8px">&#8722;${fmt(iade.miktar)} m iade</span>
+              ${iade.acik?`<span style="font-size:11px;color:#606060;margin-left:6px">· ${iade.acik}</span>`:''}
             </div>
             <div style="display:flex;gap:6px;align-items:center">
-              <span style="font-size:12px;font-weight:700;color:var(--red)">₺${fmt(iade.maliyet)} düşüldü</span>
-              <button class="btn btn-xs" style="background:#101828;color:var(--blue);border-color:#1a3a6e" onclick="iadeFisGoster('${iade.id}')">📄 Fişi Gör</button>
+              <span style="font-size:12px;font-weight:700;color:#800000">₺${fmt(iade.maliyet)} düşüldü</span>
+              <button class="btn btn-xs" style="background:#101828;color:#000080;border-color:#1a3a6e" onclick="iadeFisGoster('${iade.id}')">📄 Fişi Gör</button>
               <button class="btn btn-red btn-xs" onclick="silIade('${iade.id}','${r.id}')">Sil</button>
             </div>
           </div>`).join('')+
@@ -1481,10 +1481,10 @@ function teslimatDoldur(){
     const tamam=kalan<=0;
     return `<div style="padding:10px;background:${tamam?'#0d2215':'var(--bg1)'};border:1px solid ${tamam?'var(--green)':'var(--border)'};border-radius:8px;margin-bottom:8px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
-        <div style="font-size:12px;font-weight:700;color:var(--text)">${u.urun} ${u.renkKod?'/ '+u.renkKod:''}</div>
-        <div style="font-size:11px;color:var(--text2)">
+        <div style="font-size:12px;font-weight:700;color:#000000">${u.urun} ${u.renkKod?'/ '+u.renkKod:''}</div>
+        <div style="font-size:11px;color:#404040">
           Sipariş: <strong>${fmt(u.miktar)} m</strong> &nbsp;·&nbsp;
-          Teslim Edilen: <strong style="color:var(--green)">${fmt(oncekiTeslim)} m</strong> &nbsp;·&nbsp;
+          Teslim Edilen: <strong style="color:#006400">${fmt(oncekiTeslim)} m</strong> &nbsp;·&nbsp;
           Kalan: <strong style="color:${tamam?'var(--green)':'var(--acc)'}">${tamam?'✓ Tamam':fmt(kalan)+' m'}</strong>
         </div>
       </div>
@@ -1492,13 +1492,13 @@ function teslimatDoldur(){
         <div class="fg"><label class="lbl">Bu Teslimat (m)</label>
           <input type="number" id="tu-miktar-${i}" value="${tamam?0:kalan}" step="0.01" oninput="hTeslimat()">
         </div>
-        <div class="fg"><label class="lbl">Satış Birim <span style="background:#111c14;color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px">Satıştan</span></label>
+        <div class="fg"><label class="lbl">Satış Birim <span style="background:#111c14;color:#006400;padding:1px 6px;border-radius:4px;font-size:10px">Satıştan</span></label>
           <input class="auto" readonly value="${fmt(u.birim,4)} ${s.dovTur}">
         </div>
         <div class="fg"><label class="lbl">Kur (₺/${s.dovTur})</label>
           <input type="number" id="tu-kur-${i}" placeholder="Bugünün kuru" step="0.01" oninput="hTeslimat()">
         </div>
-        <div class="fg"><label class="lbl">Alacak TL <span style="background:#1a3a1a;color:var(--green);padding:1px 6px;border-radius:4px;font-size:10px">Hesaplanan</span></label>
+        <div class="fg"><label class="lbl">Alacak TL <span style="background:#1a3a1a;color:#006400;padding:1px 6px;border-radius:4px;font-size:10px">Hesaplanan</span></label>
           <input class="auto" readonly id="tu-tl-${i}" placeholder="Otomatik">
         </div>
       </div>
@@ -1516,7 +1516,7 @@ function teslimatDoldur(){
   }
   ozet.innerHTML=`<span>Durum: <strong style="color:${durumRenk}">${ds.durum}</strong></span>
     <span>Toplam: <strong>${fmt(ds.topSiparis)} m</strong></span>
-    <span>Teslim Edilen: <strong style="color:var(--green)">${fmt(ds.topTeslim)} m</strong></span>
+    <span>Teslim Edilen: <strong style="color:#006400">${fmt(ds.topTeslim)} m</strong></span>
     <span>Teslimat: <strong>${ds.teslimSayisi}</strong></span>
     <span>Tamamlanma: <strong style="color:${durumRenk}">${ds.yuzde}%</strong></span>`;
   document.getElementById('t-urun-detay').style.display='block';
@@ -1580,41 +1580,41 @@ function _tesGrupKartHtml(satisRef, teslimler){
     <div class="sip-kart-head" onclick="sipAkordion(this)" style="cursor:pointer">
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:13px;font-weight:800;color:var(--acc)">${s?s.musteri:teslimler[0].musteri}</span>
+          <span style="font-size:13px;font-weight:800;color:#804000">${s?s.musteri:teslimler[0].musteri}</span>
           <span class="badge ${durumCl}">${manuelTamam?'Tamamlandı':ds.durum}</span>
-          <span style="font-size:11px;color:var(--text2)">${ds.yuzde}% tamamlandı · ${ds.teslimSayisi} teslimat</span>
+          <span style="font-size:11px;color:#404040">${ds.yuzde}% tamamlandı · ${ds.teslimSayisi} teslimat</span>
         </div>
-        <div style="font-size:11px;color:var(--text2);margin-top:3px">
+        <div style="font-size:11px;color:#404040;margin-top:3px">
           Sipariş: ${fmt(ds.topSiparis)} m &nbsp;·&nbsp;
-          Teslim: <strong style="color:var(--green)">${fmt(ds.topTeslim)} m</strong> &nbsp;·&nbsp;
-          Alacak: <strong style="color:var(--green)">₺${fmt(topAlacak)}</strong>
+          Teslim: <strong style="color:#006400">${fmt(ds.topTeslim)} m</strong> &nbsp;·&nbsp;
+          Alacak: <strong style="color:#006400">₺${fmt(topAlacak)}</strong>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">
         ${s && s.teslimatTamam
-          ? `<button class="btn btn-xs" style="background:#1a2e10;color:var(--green);border-color:#2a4a1a" onclick="teslimatBekleyeneAl('${satisRef}')">↩ Bekleyene Al</button>`
-          : `<button class="btn btn-xs" style="background:#101828;color:var(--blue);border-color:#1a2e50" onclick="teslimatTamamla('${satisRef}')">✓ Tamamlandı</button>`
+          ? `<button class="btn btn-xs" style="background:#c0c0c0;color:#006400;border-color:#fff #808080 #808080 #fff;font-weight:700" onclick="teslimatBekleyeneAl('${satisRef}')">↩ Bekleyene Al</button>`
+          : `<button class="btn btn-xs" style="background:#c0c0c0;color:#000080;border-color:#fff #808080 #808080 #fff;font-weight:700" onclick="teslimatTamamla('${satisRef}')">✓ Tamamlandı</button>`
         }
-        <span class="sip-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">▾</span>
+        <span class="sip-ok" style="font-size:16px;color:#606060;transition:transform .2s;display:inline-block">▾</span>
       </div>
     </div>
     <div class="sip-kart-body">
       ${teslimler.map((r,ti)=>{
         const dc={Beklemede:'b-bekl','Teslim Edildi':'b-teslim','Kısmi Teslimat':'b-kismi','Tamamlandı':'b-teslim'}[r.durum]||'b-bekl';
         const topAl=r.topAlacakTL!=null?r.topAlacakTL:(r.urunler||[]).reduce((a,u)=>a+(u.alacakTL||u.topBorc||0),0);
-        const gc=r.gun===null?'':r.gun<=7?`<span style="background:#111c14;color:var(--green);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
-          r.gun<=30?`<span style="background:#2a1800;color:var(--acc);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
-          `<span style="background:#1e1010;color:var(--red);padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`;
+        const gc=r.gun===null?'':r.gun<=7?`<span style="background:#111c14;color:#006400;padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
+          r.gun<=30?`<span style="background:#2a1800;color:#804000;padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`:
+          `<span style="background:#1e1010;color:#800000;padding:2px 6px;border-radius:4px;font-size:10px">${r.gun}g</span>`;
         return `<div style="border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden">
           <div style="padding:8px 12px;background:var(--bg1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
             <div style="display:flex;align-items:center;gap:8px;font-size:12px">
-              <span style="font-weight:700;color:var(--text2)">${ti+1}. Teslimat</span>
-              <span style="color:var(--text3)">${r.teslimTarih}</span>
+              <span style="font-weight:700;color:#404040">${ti+1}. Teslimat</span>
+              <span style="color:#606060">${r.teslimTarih}</span>
               ${gc}
               <span class="badge ${dc}">${r.durum}</span>
             </div>
             <div style="display:flex;gap:6px">
-              <span style="font-size:12px;font-weight:700;color:var(--green)">₺${fmt(topAl)}</span>
+              <span style="font-size:12px;font-weight:700;color:#006400">₺${fmt(topAl)}</span>
               <button class="btn btn-xs" onclick="editTeslimat('${r.id}')">Düzenle</button>
               <button class="btn btn-red btn-xs" onclick="silTeslimat('${r.id}')">Sil</button>
             </div>
@@ -1628,16 +1628,16 @@ function _tesGrupKartHtml(satisRef, teslimler){
                 return `<tr>
                   <td>${u.urun}</td><td>${u.renkKod||'-'}</td>
                   <td style="font-weight:700">${fmt(u.teslimMiktar)} m</td>
-                  <td style="color:var(--acc)">${fmt(birim,4)} ${r.dovTur}</td>
-                  <td style="color:var(--text2)">${fmt(u.kur||0)} ₺</td>
-                  <td style="font-weight:800;color:var(--green)">₺${fmt(alacak)}</td>
+                  <td style="color:#804000">${fmt(birim,4)} ${r.dovTur}</td>
+                  <td style="color:#404040">${fmt(u.kur||0)} ₺</td>
+                  <td style="font-weight:800;color:#006400">₺${fmt(alacak)}</td>
                 </tr>`;
               }).join('')}</tbody></table>
             </div>
           </div>
         </div>`;
       }).join('')}
-      ${!manuelTamam?`<div style="padding:8px;background:#0e1810;border:1px dashed var(--green);border-radius:8px;text-align:center;font-size:12px;color:var(--green)">
+      ${!manuelTamam?`<div style="padding:8px;background:#0e1810;border:1px dashed var(--green);border-radius:8px;text-align:center;font-size:12px;color:#006400">
         Kalan: <strong>${fmt(ds.topSiparis-ds.topTeslim)} m</strong> — Satış/Teslim sekmesinden yeni teslimat girebilirsin
       </div>`:''}
     </div>
@@ -1895,15 +1895,15 @@ function renderCari(){
       const satAlacak=teslimler.reduce((a,t)=>a+(t.topAlacakTL!=null?t.topAlacakTL:(t.urunler||[]).reduce((x,u)=>x+(u.alacakTL||u.topBorc||0),0)),0);
       const tahmini=!teslimler.length;
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">'
-        +'<span style="color:var(--text2)">'+s.tarih+' \u00b7 '+s.urunler.map(u=>u.urun+(u.renkKod?' ('+u.renkKod+')':'')).join(', ')+' \u00b7 '+fmt(s.topDov)+' '+s.dovTur+'</span>'
+        +'<span style="color:#404040">'+s.tarih+' \u00b7 '+s.urunler.map(u=>u.urun+(u.renkKod?' ('+u.renkKod+')':'')).join(', ')+' \u00b7 '+fmt(s.topDov)+' '+s.dovTur+'</span>'
         +'<span style="font-weight:700;color:'+(tahmini?'var(--text3)':'var(--green)')+'">'+(tahmini?'Teslim bekleniyor':'\u20ba'+fmt(satAlacak))+'</span>'
         +'</div>';
     }).join('');
     const tahsatirlar=tahsilatlar.map(t=>{
       return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px">'
-        +'<span style="color:var(--text2)">'+t.tarih+(t.acik?' \u2014 '+t.acik:'')+'</span>'
+        +'<span style="color:#404040">'+t.tarih+(t.acik?' \u2014 '+t.acik:'')+'</span>'
         +'<div style="display:flex;gap:8px;align-items:center">'
-        +'<span style="color:var(--green);font-weight:700">'+(t.tl?'\u20ba'+fmt(t.tl):'')+(t.dov?' / '+fmt(t.dov)+' '+t.dovTur:'')+'</span>'
+        +'<span style="color:#006400;font-weight:700">'+(t.tl?'\u20ba'+fmt(t.tl):'')+(t.dov?' / '+fmt(t.dov)+' '+t.dovTur:'')+'</span>'
         +'<button class="btn btn-red btn-xs" onclick="silCari(\''+t.id+'\')">Sil</button>'
         +'</div></div>';
     }).join('');
@@ -1911,18 +1911,18 @@ function renderCari(){
       +'<div class="cari-head" onclick="cariAkordion(this)">'
       +'<div style="flex:1">'
       +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
-      +'<span style="font-size:14px;font-weight:800;color:var(--acc)">'+musteri+'</span>'
-      +'<span style="font-size:11px;color:var(--text3)">'+satislar.length+' sipari\u015f \u00b7 '+tahsilatlar.length+' tahsilat</span>'
+      +'<span style="font-size:14px;font-weight:800;color:#804000">'+musteri+'</span>'
+      +'<span style="font-size:11px;color:#606060">'+satislar.length+' sipari\u015f \u00b7 '+tahsilatlar.length+' tahsilat</span>'
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:12px;margin-top:4px;flex-wrap:wrap">'
-      +'<span style="font-size:12px;color:var(--text2)">Alacak: <strong style="color:var(--green)">\u20ba'+fmt(topAlacak)+'</strong></span>'
-      +'<span style="font-size:12px;color:var(--text2)">Tahsilat: <strong style="color:var(--blue)">\u20ba'+fmt(topTah)+'</strong></span>'
+      +'<span style="font-size:12px;color:#404040">Alacak: <strong style="color:#006400">\u20ba'+fmt(topAlacak)+'</strong></span>'
+      +'<span style="font-size:12px;color:#404040">Tahsilat: <strong style="color:#000080">\u20ba'+fmt(topTah)+'</strong></span>'
       +'<span style="font-size:12px;font-weight:800;color:'+bR+'">Bakiye: \u20ba'+fmt(Math.abs(bakiye))+' '+bLabel+'</span>'
       +'</div>'
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">'
-      +'<button class="btn btn-xs" style="background:#1a1500;color:var(--acc);border-color:#3a3000" onclick="cariRaporGoster(\''+musteri+'\')">Rapor</button>'
-      +'<span class="cari-ok" style="font-size:16px;color:var(--text3);transition:transform .2s;display:inline-block">\u25be</span>'
+      +'<button class="btn btn-xs" style="background:#1a1500;color:#804000;border-color:#3a3000" onclick="cariRaporGoster(\''+musteri+'\')">Rapor</button>'
+      +'<span class="cari-ok" style="font-size:16px;color:#606060;transition:transform .2s;display:inline-block">\u25be</span>'
       +'</div>'
       +'</div>'
       +'<div class="cari-body">'
@@ -1931,9 +1931,9 @@ function renderCari(){
       +'<div class="mc"><div class="mc-val b">\u20ba'+fmt(topTah)+'</div><div class="mc-lbl">Tahsil Edilen</div></div>'
       +'<div class="mc" style="border-color:'+bR+'"><div class="mc-val" style="color:'+bR+'">\u20ba'+fmt(Math.abs(bakiye))+'</div><div class="mc-lbl">'+bLabel+'</div></div>'
       +'</div>'
-      +'<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Sipari\u015fler</div>'
+      +'<div style="font-size:10px;font-weight:700;color:#606060;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Sipari\u015fler</div>'
       +sipsatirlar
-      +(tahsilatlar.length?'<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin:12px 0 8px">Tahsilat Ge\u00e7mi\u015fi</div>'+tahsatirlar:'')
+      +(tahsilatlar.length?'<div style="font-size:10px;font-weight:700;color:#606060;text-transform:uppercase;letter-spacing:0.5px;margin:12px 0 8px">Tahsilat Ge\u00e7mi\u015fi</div>'+tahsatirlar:'')
       +'</div>'
       +'</div>';
   }).join('');
@@ -2153,12 +2153,12 @@ function renderKar(){
           const kar=alacak-mal;
           return `<tr>
             <td>${s.tarih}</td><td>${s.musteri}</td>
-            <td style="font-size:11px;color:var(--text3)">${s.urunler.map(u=>u.urun).join(', ')}</td>
-            <td style="color:var(--green);font-weight:700">₺${fmt(alacak)}</td>
-            <td style="color:var(--red);font-weight:700">₺${fmt(mal)}</td>
-            <td style="color:var(--blue);font-weight:700">₺${fmt(kar)}</td>
-            <td style="color:var(--green);font-weight:800">₺${fmt(kar*0.5)}</td>
-            <td style="color:var(--text3)">₺${fmt(kar*0.5)}</td>
+            <td style="font-size:11px;color:#606060">${s.urunler.map(u=>u.urun).join(', ')}</td>
+            <td style="color:#006400;font-weight:700">₺${fmt(alacak)}</td>
+            <td style="color:#800000;font-weight:700">₺${fmt(mal)}</td>
+            <td style="color:#000080;font-weight:700">₺${fmt(kar)}</td>
+            <td style="color:#006400;font-weight:800">₺${fmt(kar*0.5)}</td>
+            <td style="color:#606060">₺${fmt(kar*0.5)}</td>
           </tr>`;
         }).join(''):'<tr><td colspan="8" class="empty">Henüz satış yok</td></tr>'}</tbody>
       </table></div>
@@ -2177,23 +2177,23 @@ function renderKar(){
       <div class="akord-head" onclick="akordToggle(this)">
         <div>
           <span style="font-size:13px;font-weight:700">${ayStr}</span>
-          <span style="font-size:12px;color:var(--text3);margin-left:10px">Toplam: ₺${fmt(top)} · Payım: ₺${fmt(top*0.5)}</span>
+          <span style="font-size:12px;color:#606060;margin-left:10px">Toplam: ₺${fmt(top)} · Payım: ₺${fmt(top*0.5)}</span>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <button class="btn btn-red btn-xs" onclick="event.stopPropagation();silGider('${ay}')">Sil</button>
-          <span style="font-size:16px;color:var(--text3)">▾</span>
+          <span style="font-size:16px;color:#606060">▾</span>
         </div>
       </div>
       <div class="akord-body">
         <div class="grid g2" style="gap:8px;margin-bottom:10px">
           ${k.giderler.map(g=>`<div style="background:var(--bg1);border:1px solid var(--border);border-radius:7px;padding:8px 12px;display:flex;justify-content:space-between;font-size:12px">
-            <span style="color:var(--text2)">${g.ad}</span><span style="font-weight:700">₺${fmt(g.tutar)}</span>
+            <span style="color:#404040">${g.ad}</span><span style="font-weight:700">₺${fmt(g.tutar)}</span>
           </div>`).join('')}
         </div>
         <div style="font-size:12px;display:flex;gap:16px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--border)">
           <span>Toplam: <strong>₺${fmt(top)}</strong></span>
-          <span style="color:var(--red)">Benim Payım: <strong>₺${fmt(top*0.5)}</strong></span>
-          <span style="color:var(--text3)">Şirket Payı: <strong>₺${fmt(top*0.5)}</strong></span>
+          <span style="color:#800000">Benim Payım: <strong>₺${fmt(top*0.5)}</strong></span>
+          <span style="color:#606060">Şirket Payı: <strong>₺${fmt(top*0.5)}</strong></span>
         </div>
         ${k.not?`<div class="notebox" style="margin-top:8px"><label>Not</label><div style="font-size:13px;color:#78350F;white-space:pre-wrap">${k.not}</div></div>`:''}
       </div>
@@ -2315,7 +2315,7 @@ function renderStokOzet(){
   const topB1=D.stok.filter(s=>s.kalite==='B1').reduce((a,s)=>a+s.miktar,0);
   const topTum=topA1+topB1;
   document.getElementById('stok-ozet-metrics').innerHTML=`
-    <div class="mc"><div class="mc-val" style="color:var(--text)">${fmt(topTum)} m</div><div class="mc-lbl">Toplam Stok</div></div>
+    <div class="mc"><div class="mc-val" style="color:#000000">${fmt(topTum)} m</div><div class="mc-lbl">Toplam Stok</div></div>
     <div class="mc stok-a1" style="border:1px solid #1a4731"><div class="mc-val g">${fmt(topA1)} m</div><div class="mc-lbl">A1 Stok</div></div>
     <div class="mc stok-b1" style="border:1px solid #7f1d1d"><div class="mc-val r">${fmt(topB1)} m</div><div class="mc-lbl">B1 Kalite</div></div>`;
 }
@@ -2327,7 +2327,7 @@ function renderStokListe(){
   el.innerHTML=`<div class="tbl-wrap"><table>
     <thead><tr><th>Tarih</th><th>Ürün</th><th>Renk/Kod</th><th>Miktar(m)</th><th>Kalite</th><th></th></tr></thead>
     <tbody>${liste.map((s,i)=>{
-      const kalBg=s.kalite==='A1'?'background:#111c14;color:var(--green)':'background:#3b0f0f;color:var(--red)';
+      const kalBg=s.kalite==='A1'?'background:#111c14;color:#006400':'background:#3b0f0f;color:#800000';
       const realIdx=D.stok.indexOf(s);
       return `<tr>
         <td>${s.tarih}</td><td>${s.urun}</td><td>${s.renkKod||'-'}</td>
@@ -2337,8 +2337,8 @@ function renderStokListe(){
       </tr>`;
     }).join('')}
     <tr style="background:var(--bg1)">
-      <td colspan="3" style="font-weight:700;color:var(--acc)">Toplam</td>
-      <td style="font-weight:800;color:var(--text)">${fmt(liste.reduce((a,s)=>a+s.miktar,0))} m</td>
+      <td colspan="3" style="font-weight:700;color:#804000">Toplam</td>
+      <td style="font-weight:800;color:#000000">${fmt(liste.reduce((a,s)=>a+s.miktar,0))} m</td>
       <td colspan="2"></td>
     </tr>
     </tbody></table></div>`;
@@ -2371,11 +2371,11 @@ function fazlaIade(uretimId,urun,renkKod,miktar,birim,kur,maliyet){
   const body=document.getElementById('iade-modal-body');
   body.innerHTML=`
     <div style="background:#1a0a0a;border:1px solid #5a1a1a;border-radius:8px;padding:14px;margin-bottom:14px">
-      <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px">İade Fişi</div>
-      <div style="font-size:12px;color:var(--text);margin-bottom:4px">Ürün: <strong>${urun}${renkKod?' / '+renkKod:''}</strong></div>
-      <div style="font-size:12px;color:var(--text);margin-bottom:4px">İade Miktarı: <strong>${fmt(miktar)} m</strong></div>
-      <div style="font-size:12px;color:var(--text);margin-bottom:4px">Alış Birim: <strong>${fmt(birim,4)} × Kur ${fmt(kur)} = ${fmt(birim*kur,4)} ₺/m</strong></div>
-      <div style="font-size:14px;font-weight:800;color:var(--red);margin-top:8px">Düşülecek Borç: ₺${fmt(maliyet)}</div>
+      <div style="font-size:13px;font-weight:700;color:#800000;margin-bottom:8px">İade Fişi</div>
+      <div style="font-size:12px;color:#000000;margin-bottom:4px">Ürün: <strong>${urun}${renkKod?' / '+renkKod:''}</strong></div>
+      <div style="font-size:12px;color:#000000;margin-bottom:4px">İade Miktarı: <strong>${fmt(miktar)} m</strong></div>
+      <div style="font-size:12px;color:#000000;margin-bottom:4px">Alış Birim: <strong>${fmt(birim,4)} × Kur ${fmt(kur)} = ${fmt(birim*kur,4)} ₺/m</strong></div>
+      <div style="font-size:14px;font-weight:800;color:#800000;margin-top:8px">Düşülecek Borç: ₺${fmt(maliyet)}</div>
     </div>
     <div class="fg" style="margin-bottom:10px">
       <label class="lbl">İade Tarihi</label>
@@ -2619,7 +2619,7 @@ function kurGuncelle(){
     if(usdDEl&&usdD) usdDEl.textContent='dün: '+usdD;
     if(eurDEl&&eurD) eurDEl.textContent='dün: '+eurD;
     if(saatEl) saatEl.textContent=new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
-    if(durumEl){durumEl.textContent='ECB';durumEl.style.color='var(--green)';}
+    if(durumEl){durumEl.textContent='ECB';durumEl.style.color='#90e0a0';}
     localStorage.setItem('son_usd_kur',usdB||'');
     localStorage.setItem('son_eur_kur',eurB||'');
   }
