@@ -636,6 +636,15 @@ function loadFromSheets(){
           if(!D[t]) D[t]=[];
           localStorage.setItem('sd4_'+t,JSON.stringify(D[t]));
         });
+        // Eski kayıtlara sipKod yoksa geriye dönük ata
+        D.satis.forEach((s,i)=>{
+          if(!s.sipKod){
+            const d=new Date(s.tarih||s.zaman||'2026-01-01');
+            const ay=String(d.getMonth()+1).padStart(2,'0');
+            const yy=String(d.getFullYear()).slice(2);
+            s.sipKod='SP-'+ay+yy+'-'+String(i+1).padStart(3,'0');
+          }
+        });
         _sheetsHazir = true; // Artık sync yapılabilir
         if(durum){durum.textContent='✓ Güncellendi';durum.style.color='var(--green)';setTimeout(function(){if(durum)durum.textContent='';},3000);}
         return true;
@@ -655,6 +664,15 @@ function loadFromSheets(){
 const fmt=(n,d=2)=>parseFloat((+n||0).toFixed(d)).toLocaleString('tr-TR');
 const bugun=()=>new Date().toISOString().slice(0,10);
 const uid=p=>p+Date.now()+Math.floor(Math.random()*1000);
+function sipKodUret(){
+  const now=new Date();
+  const ay=String(now.getMonth()+1).padStart(2,'0');
+  const yy=String(now.getFullYear()).slice(2);
+  const prefix='SP-'+ay+yy+'-';
+  const ayKodlari=D.satis.filter(s=>s.sipKod&&s.sipKod.startsWith(prefix));
+  const sira=String(ayKodlari.length+1).padStart(3,'0');
+  return prefix+sira;
+}
 
 document.getElementById('tarih-lbl').textContent=
   new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
@@ -831,8 +849,9 @@ function ekSatis(){
   musteri_ekle_fihrist(musteri);
   urunSatirlari.forEach(r=>urunFihristKontrol(r.urun,r.renkKod,''));
   const topDov=urunSatirlari.reduce((s,r)=>s+r.birim*r.miktar,0);
+  const yeniSipKod=sipKodUret();
   D.satis.push({
-    id:uid('S'),tarih,musteri,dovTur:dov,
+    id:uid('S'),sipKod:yeniSipKod,tarih,musteri,dovTur:dov,
     urunler:urunSatirlari.map(r=>({
       urun:r.urun,renkKod:r.renkKod,miktar:r.miktar,birim:r.birim,
       topDov:+(r.birim*r.miktar).toFixed(2)
@@ -865,6 +884,7 @@ function _sipKartHtml(s){
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span style="font-size:13px;font-weight:700">${s.tarih}</span>
           <span style="font-size:13px;font-weight:800;color:#804000">${s.musteri}</span>
+          ${s.sipKod?`<span style="background:#000080;color:#fff;padding:1px 8px;font-size:11px;font-weight:700;letter-spacing:1px;border:1px solid;border-color:#fff #808080 #808080 #fff">${s.sipKod}</span>`:''}
           ${uretimBadge}
         </div>
         <div style="font-size:11px;color:#404040;margin-top:3px">
@@ -873,7 +893,7 @@ function _sipKartHtml(s){
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
         <button class="btn btn-xs" style="background:#c0c0c0;color:#804000;border-color:#fff #808080 #808080 #fff;font-weight:700" onclick="fisMusteriGoster('${s.id}')">Müşteri Fişi</button>
-        <button class="btn btn-xs" style="background:#101828;color:#000080;border-color:#1a3a6e" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
+        <button class="btn btn-xs" style="background:#c0c0c0;color:#000080;border-color:#fff #808080 #808080 #fff;font-weight:700" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
         <button class="btn btn-xs" onclick="editSatis('${s.id}')">Düzenle</button>
         <button class="btn btn-red btn-xs" onclick="silSatis('${s.id}')">Sil</button>
         <span class="sip-ok" style="font-size:16px;color:#606060;transition:transform .2s;display:inline-block">▾</span>
@@ -1246,6 +1266,7 @@ function _ureKartHtml(r){
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span style="font-size:13px;font-weight:800;color:#804000">${r.musteri}</span>
           <span class="badge b-teslim">${r.fabrika}</span>
+          ${(()=>{const s=D.satis.find(x=>x.id===r.satisRef);return s&&s.sipKod?`<span style="background:#000080;color:#fff;padding:1px 8px;font-size:11px;font-weight:700;letter-spacing:1px;border:1px solid;border-color:#fff #808080 #808080 #fff">${s.sipKod}</span>`:''})()}
           ${eksikRozet}${tamRozet}
         </div>
         <div style="font-size:11px;color:#404040;margin-top:3px">
@@ -1581,6 +1602,7 @@ function _tesGrupKartHtml(satisRef, teslimler){
       <div style="flex:1">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span style="font-size:13px;font-weight:800;color:#804000">${s?s.musteri:teslimler[0].musteri}</span>
+          ${s&&s.sipKod?`<span style="background:#000080;color:#fff;padding:1px 8px;font-size:11px;font-weight:700;letter-spacing:1px;border:1px solid;border-color:#fff #808080 #808080 #fff">${s.sipKod}</span>`:''}
           <span class="badge ${durumCl}">${manuelTamam?'Tamamlandı':ds.durum}</span>
           <span style="font-size:11px;color:#404040">${ds.yuzde}% tamamlandı · ${ds.teslimSayisi} teslimat</span>
         </div>
@@ -2144,23 +2166,32 @@ function renderKar(){
     <div style="margin-bottom:12px">
       <div class="sh"><h3>Sipariş Bazında Kâr</h3></div>
       <div class="tbl-wrap"><table>
-        <thead><tr><th>Tarih</th><th>Müşteri</th><th>Ürünler</th><th>Satış/Teslim TL</th><th>Maliyet TL</th><th>Brüt Kâr</th><th>Benim Payım</th><th>Şirket Payı</th></tr></thead>
+        <thead><tr><th>Tarih</th><th>Müşteri</th><th>Sip. Kodu</th><th>Sip. Miktarı (m)</th><th>Üretim Miktarı (m)</th><th>Fark (m)</th><th>Satış/Teslim TL</th><th>Maliyet TL</th><th>Brüt Kâr</th><th>Benim Payım</th><th>Şirket Payı</th></tr></thead>
         <tbody>${D.satis.length?D.satis.map(s=>{
           const tls=D.teslimat.filter(t=>t.satisRef===s.id);
           const alacak=tls.reduce((a,t)=>a+(t.topAlacakTL!=null?t.topAlacakTL:(t.urunler||[]).reduce((s,u)=>s+(u.alacakTL||u.topBorc||0),0)),0);
           const ur=D.uretim.find(u=>u.satisRef===s.id);
           const mal=ur?ur.topTL||0:0;
           const kar=alacak-mal;
+          // Sipariş ve üretim miktar hesapları
+          const sipMiktar=s.urunler.reduce((a,u)=>a+(u.miktar||0),0);
+          const ur2=D.uretim.find(u=>u.satisRef===s.id);
+          const ureMiktar=ur2?ur2.urunler.reduce((a,u)=>a+(u.uretimMiktar||0),0):0;
+          const farkMiktar=ureMiktar-sipMiktar;
+          const farkRenk=farkMiktar>0?'#155724':farkMiktar<0?'#721c24':'#404040';
           return `<tr>
             <td>${s.tarih}</td><td>${s.musteri}</td>
-            <td style="font-size:11px;color:#606060">${s.urunler.map(u=>u.urun).join(', ')}</td>
+            <td><span style="background:#000080;color:#fff;padding:1px 7px;font-size:11px;font-weight:700;letter-spacing:1px;white-space:nowrap">${s.sipKod||'-'}</span></td>
+            <td style="text-align:right;font-weight:700">${fmt(sipMiktar)}</td>
+            <td style="text-align:right;font-weight:700">${fmt(ureMiktar)}</td>
+            <td style="text-align:right;font-weight:700;color:${farkRenk}">${farkMiktar>=0?'+':''}${fmt(farkMiktar)}</td>
             <td style="color:#006400;font-weight:700">₺${fmt(alacak)}</td>
             <td style="color:#800000;font-weight:700">₺${fmt(mal)}</td>
             <td style="color:#000080;font-weight:700">₺${fmt(kar)}</td>
             <td style="color:#006400;font-weight:800">₺${fmt(kar*0.5)}</td>
             <td style="color:#606060">₺${fmt(kar*0.5)}</td>
           </tr>`;
-        }).join(''):'<tr><td colspan="8" class="empty">Henüz satış yok</td></tr>'}</tbody>
+        }).join(''):'<tr><td colspan="11" class="empty">Henüz satış yok</td></tr>'}</tbody>
       </table></div>
     </div>`;
 
