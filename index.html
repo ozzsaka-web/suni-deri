@@ -168,7 +168,7 @@ tr:hover td{background:#fafbfc}
 .modal-body{padding:18px;overflow-y:auto;flex:1}
 
 /* ── FİŞ (YAZDIRMA) ── */
-.fis{font-family:'Courier New',Courier,monospace;font-size:12px;line-height:1.6;color:#000;background:#fff;padding:20px;border-radius:8px;border:1px solid var(--border)}
+
 .fis-baslik{text-align:center;font-weight:700;font-size:14px;letter-spacing:1px;margin-bottom:1px}
 .fis-alt{text-align:center;font-size:11px;letter-spacing:0.5px;margin-bottom:3px;color:#666}
 .fis-sep{border:none;border-top:1px dashed #ccc;margin:7px 0}
@@ -459,12 +459,13 @@ tr:hover td{background:#fafbfc}
   </div>
   <div id="kar-ozet"></div>
 
-  <!-- Pay Alım -->
-  <div class="card" style="margin-top:16px">
-    <div class="card-header">
-      <div class="card-title">Pay Alım Kaydı</div>
+  <!-- Pay Alım - Akordion -->
+  <div class="akord-item" style="margin-top:12px">
+    <div class="akord-head" onclick="akordToggle(this)">
+      <span style="font-size:13px;font-weight:600">+ Pay Al</span>
+      <span style="font-size:12px;color:var(--text3)">▼</span>
     </div>
-    <div class="card-body">
+    <div class="akord-body">
       <div class="grid g3" style="margin-bottom:10px">
         <div class="fg"><label class="lbl">Tarih</label><input type="date" id="pay-tarih"></div>
         <div class="fg"><label class="lbl">Alınan Tutar (TL)</label><input type="number" id="pay-tutar" placeholder="0.00" step="0.01"></div>
@@ -478,37 +479,41 @@ tr:hover td{background:#fafbfc}
   </div>
   <div id="pay-liste"></div>
 
-  <!-- Gider -->
-  <div class="card" style="margin-top:16px">
-    <div class="card-header"><div class="card-title">Gider Girişi</div></div>
-    <div class="card-body">
+  <!-- Gider - Akordion -->
+  <div class="akord-item" style="margin-top:8px">
+    <div class="akord-head" onclick="akordToggle(this)">
+      <span style="font-size:13px;font-weight:600">+ Gider Gir</span>
+      <span style="font-size:12px;color:var(--text3)">▼</span>
+    </div>
+    <div class="akord-body">
       <div class="fg" style="margin-bottom:10px">
         <label class="lbl">Ay (YYYY-MM)</label><input type="month" id="g-ay">
       </div>
       <div class="grid g2">
-        <div><div class="grid g2" style="margin-bottom:6px">
-          <div class="fg"><label class="lbl">Gider 1 Adı</label><input type="text" id="g1-ad" placeholder="GİDER ADI"></div>
-          <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g1-t" placeholder="0.00" step="0.01"></div>
-        </div>
-        <div class="grid g2" style="margin-bottom:6px">
-          <div class="fg"><label class="lbl">Gider 2 Adı</label><input type="text" id="g2-ad" placeholder="GİDER ADI"></div>
-          <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g2-t" placeholder="0.00" step="0.01"></div>
-        </div>
-        <div class="grid g2" style="margin-bottom:6px">
-          <div class="fg"><label class="lbl">Gider 3 Adı</label><input type="text" id="g3-ad" placeholder="GİDER ADI"></div>
-          <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g3-t" placeholder="0.00" step="0.01"></div>
-        </div>
+        <div>
+          <div class="grid g2" style="margin-bottom:6px">
+            <div class="fg"><label class="lbl">Gider 1 Adı</label><input type="text" id="g1-ad" placeholder="GİDER ADI"></div>
+            <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g1-t" placeholder="0.00" step="0.01"></div>
+          </div>
+          <div class="grid g2" style="margin-bottom:6px">
+            <div class="fg"><label class="lbl">Gider 2 Adı</label><input type="text" id="g2-ad" placeholder="GİDER ADI"></div>
+            <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g2-t" placeholder="0.00" step="0.01"></div>
+          </div>
+          <div class="grid g2" style="margin-bottom:6px">
+            <div class="fg"><label class="lbl">Gider 3 Adı</label><input type="text" id="g3-ad" placeholder="GİDER ADI"></div>
+            <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g3-t" placeholder="0.00" step="0.01"></div>
+          </div>
         </div>
         <div>
-        <div class="grid g2" style="margin-bottom:6px">
-          <div class="fg"><label class="lbl">Gider 4 Adı</label><input type="text" id="g4-ad" placeholder="GİDER ADI"></div>
-          <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g4-t" placeholder="0.00" step="0.01"></div>
-        </div>
-        <div class="grid g2" style="margin-bottom:6px">
-          <div class="fg"><label class="lbl">Gider 5 Adı</label><input type="text" id="g5-ad" placeholder="GİDER ADI"></div>
-          <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g5-t" placeholder="0.00" step="0.01"></div>
-        </div>
-        <div class="fg"><label class="lbl">Not</label><textarea id="g-not" rows="2" placeholder="OPSİYONEL NOT"></textarea></div>
+          <div class="grid g2" style="margin-bottom:6px">
+            <div class="fg"><label class="lbl">Gider 4 Adı</label><input type="text" id="g4-ad" placeholder="GİDER ADI"></div>
+            <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g4-t" placeholder="0.00" step="0.01"></div>
+          </div>
+          <div class="grid g2" style="margin-bottom:6px">
+            <div class="fg"><label class="lbl">Gider 5 Adı</label><input type="text" id="g5-ad" placeholder="GİDER ADI"></div>
+            <div class="fg"><label class="lbl">Tutar</label><input type="number" id="g5-t" placeholder="0.00" step="0.01"></div>
+          </div>
+          <div class="fg"><label class="lbl">Not</label><textarea id="g-not" rows="2" placeholder="OPSİYONEL NOT"></textarea></div>
         </div>
       </div>
       <div class="bgrp">
@@ -1354,34 +1359,34 @@ function fisMusteriGoster(id){
   if(!s)return;
   document.getElementById('fis-modal-baslik').textContent='Müşteri Bilgi Fişi — '+s.musteri;
   document.getElementById('fis-icerik').innerHTML=`
-    <div class="fis">
-      <div class="fis-baslik">SUNİ DERİ TAKİP</div>
-      <div class="fis-alt">MÜŞTERİ BİLGİ FİŞİ</div>
-      <hr class="fis-sep">
-      <div class="fis-kv"><span class="k">Sipariş Kodu :</span><span class="v">${s.sipKod||s.id.slice(-6)}</span></div>
-      <div class="fis-kv"><span class="k">Müşteri      :</span><span class="v">${s.musteri}</span></div>
-      <div class="fis-kv"><span class="k">Sipariş Tar. :</span><span class="v">${s.tarih}</span></div>
-      <div class="fis-kv"><span class="k">Döviz Türü   :</span><span class="v">${s.dovTur}</span></div>
-      <div class="fis-kv"><span class="k">Fiş Tarihi   :</span><span class="v">${new Date().toLocaleDateString('tr-TR')}</span></div>
-      <hr class="fis-sep">
-      <div class="fis-thead"><span>ÜRÜN / RENK</span><span class="fis-r">MİKTAR</span><span class="fis-r">BİRİM</span><span class="fis-r">TOPLAM (${s.dovTur})</span></div>
-      ${s.urunler.map(u=>`<div class="fis-satir" style="grid-template-columns:1.8fr 0.8fr 0.8fr 1.2fr">
+    <div class="fis-dm">
+      <div class="fis-dm-baslik">SUNİ DERİ TAKİP</div>
+      <div class="fis-dm-alt">MÜŞTERİ BİLGİ FİŞİ</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-kv"><span class="k">Sipariş Kodu :</span><span class="v">${s.sipKod||s.id.slice(-6)}</span></div>
+      <div class="fis-dm-kv"><span class="k">Müşteri      :</span><span class="v">${s.musteri}</span></div>
+      <div class="fis-dm-kv"><span class="k">Sipariş Tar. :</span><span class="v">${s.tarih}</span></div>
+      <div class="fis-dm-kv"><span class="k">Döviz Türü   :</span><span class="v">${s.dovTur}</span></div>
+      <div class="fis-dm-kv"><span class="k">Fiş Tarihi   :</span><span class="v">${new Date().toLocaleDateString('tr-TR')}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-thead"><span>ÜRÜN / RENK</span><span class="fis-dm-r">MİKTAR</span><span class="fis-dm-r">BİRİM</span><span class="fis-dm-r">TOPLAM (${s.dovTur})</span></div>
+      ${s.urunler.map(u=>`<div class="fis-dm-satir" style="grid-template-columns:1.8fr 0.8fr 0.8fr 1.2fr">
         <span>${u.urun}${u.renkKod?' / '+u.renkKod:''}</span>
-        <span class="fis-r">${fmt(u.miktar)} m</span>
-        <span class="fis-r">${fmt(u.birim,4)}</span>
-        <span class="fis-r">${fmt(u.topDov)}</span>
+        <span class="fis-dm-r">${fmt(u.miktar)} m</span>
+        <span class="fis-dm-r">${fmt(u.birim,4)}</span>
+        <span class="fis-dm-r">${fmt(u.topDov)}</span>
       </div>`).join('')}
-      <hr class="fis-sep">
-      <div class="fis-toplam"><span>TOPLAM (${s.dovTur}) :</span><span>${fmt(s.topDov)} ${s.dovTur}</span></div>
-      <hr class="fis-sep">
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-toplam"><span>TOPLAM (${s.dovTur}) :</span><span>${fmt(s.topDov)} ${s.dovTur}</span></div>
+      <hr class="fis-dm-sep">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;font-size:12px;font-family:'Courier New',monospace">
         <div style="border-top:1px solid #000;padding-top:4px;text-align:center">Teslim Eden</div>
         <div style="border-top:1px solid #000;padding-top:4px;text-align:center">Teslim Alan</div>
       </div>
-      <hr class="fis-sep">
-      <div class="fis-footer">
-        <div class="fis-footer-name">Özdemir Saka</div>
-        <div class="fis-footer-app">Saka Application Form</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-footer">
+        <div class="fis-dm-footer-name">Özdemir Saka</div>
+        <div class="fis-dm-footer-app">Saka Application Form</div>
       </div>
     </div>`;
   document.getElementById('fis-modal').classList.add('open');
@@ -1393,39 +1398,39 @@ function fisFabrikaGoster(id){
   const u=D.uretim.find(x=>x.satisRef===id);
   document.getElementById('fis-modal-baslik').textContent='Fabrika Sipariş Fişi';
   document.getElementById('fis-icerik').innerHTML=`
-    <div class="fis">
-      <div class="fis-baslik">SUNİ DERİ TAKİP</div>
-      <div class="fis-alt">ÜRETİM SİPARİŞ FİŞİ</div>
-      <hr class="fis-sep">
-      <div class="fis-kv"><span class="k">Sipariş Kodu :</span><span class="v">${s.sipKod||s.id.slice(-6)}</span></div>
-      <div class="fis-kv"><span class="k">Fabrika      :</span><span class="v">${u?u.fabrika:'DERİSAN TİCARET'}</span></div>
-      <div class="fis-kv"><span class="k">Sipariş Tar. :</span><span class="v">${s.tarih}</span></div>
-      <div class="fis-kv"><span class="k">Döviz Türü   :</span><span class="v">${s.dovTur}</span></div>
-      <div class="fis-kv"><span class="k">Not          :</span><span class="v">Müşteri bilgisi paylaşılmamıştır</span></div>
-      <div class="fis-kv"><span class="k">Fiş Tarihi   :</span><span class="v">${new Date().toLocaleDateString('tr-TR')}</span></div>
-      <hr class="fis-sep">
-      <div class="fis-thead"><span>ÜRÜN / RENK</span><span class="fis-r">SİP.M</span><span class="fis-r">ÜR.M</span><span class="fis-r">KUR</span><span class="fis-r">TOPLAM TL</span></div>
+    <div class="fis-dm">
+      <div class="fis-dm-baslik">SUNİ DERİ TAKİP</div>
+      <div class="fis-dm-alt">ÜRETİM SİPARİŞ FİŞİ</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-kv"><span class="k">Sipariş Kodu :</span><span class="v">${s.sipKod||s.id.slice(-6)}</span></div>
+      <div class="fis-dm-kv"><span class="k">Fabrika      :</span><span class="v">${u?u.fabrika:'DERİSAN TİCARET'}</span></div>
+      <div class="fis-dm-kv"><span class="k">Sipariş Tar. :</span><span class="v">${s.tarih}</span></div>
+      <div class="fis-dm-kv"><span class="k">Döviz Türü   :</span><span class="v">${s.dovTur}</span></div>
+      <div class="fis-dm-kv"><span class="k">Not          :</span><span class="v">Müşteri bilgisi paylaşılmamıştır</span></div>
+      <div class="fis-dm-kv"><span class="k">Fiş Tarihi   :</span><span class="v">${new Date().toLocaleDateString('tr-TR')}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-thead"><span>ÜRÜN / RENK</span><span class="fis-dm-r">SİP.M</span><span class="fis-dm-r">ÜR.M</span><span class="fis-dm-r">KUR</span><span class="fis-dm-r">TOPLAM TL</span></div>
       ${s.urunler.map((uu,i)=>{
         const ud=u&&u.urunler?u.urunler[i]:null;
-        return `<div class="fis-satir">
+        return `<div class="fis-dm-satir">
           <span>${uu.urun}${uu.renkKod?' / '+uu.renkKod:''}</span>
-          <span class="fis-r">${fmt(uu.miktar)}</span>
-          <span class="fis-r">${ud?fmt(ud.uretimMiktar):'-'}</span>
-          <span class="fis-r">${ud?ud.dovTur+' '+fmt(ud.kur):'-'}</span>
-          <span class="fis-r">${ud?fmt(ud.alisTL):'-'}</span>
+          <span class="fis-dm-r">${fmt(uu.miktar)}</span>
+          <span class="fis-dm-r">${ud?fmt(ud.uretimMiktar):'-'}</span>
+          <span class="fis-dm-r">${ud?ud.dovTur+' '+fmt(ud.kur):'-'}</span>
+          <span class="fis-dm-r">${ud?fmt(ud.alisTL):'-'}</span>
         </div>`;
       }).join('')}
-      <hr class="fis-sep">
-      ${u?`<div class="fis-toplam"><span>TOPLAM ÜRETİM BORCU :</span><span>₺${fmt(u.topTL)}</span></div>`:''}
-      <hr class="fis-sep">
+      <hr class="fis-dm-sep">
+      ${u?`<div class="fis-dm-toplam"><span>TOPLAM ÜRETİM BORCU :</span><span>₺${fmt(u.topTL)}</span></div>`:''}
+      <hr class="fis-dm-sep">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;font-size:12px;font-family:'Courier New',monospace">
         <div style="border-top:1px solid #000;padding-top:4px;text-align:center">Teslim Eden (Fabrika)</div>
         <div style="border-top:1px solid #000;padding-top:4px;text-align:center">Teslim Alan</div>
       </div>
-      <hr class="fis-sep">
-      <div class="fis-footer">
-        <div class="fis-footer-name">Özdemir Saka</div>
-        <div class="fis-footer-app">Saka Application Form</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-footer">
+        <div class="fis-dm-footer-name">Özdemir Saka</div>
+        <div class="fis-dm-footer-app">Saka Application Form</div>
       </div>
     </div>`;
   document.getElementById('fis-modal').classList.add('open');
@@ -1618,12 +1623,6 @@ function _ureKartHtml(r){
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
         <button class="btn btn-xs btn-blue" onclick="sipUretimFisGoster('${r.satisRef}')">Üretim Fişi</button>
         <button class="btn btn-xs btn-green" onclick="sipSatisFisGoster('${r.satisRef}')">Satış Fişi</button>
-        <button class="btn btn-xs" onclick="editUretim('${r.id}')">Düzenle</button>
-        ${r.tamam
-          ?`<button class="btn btn-xs btn-green" onclick="uretimBekleyeneAl('${r.id}')">↩ Bekleyene Al</button>`
-          :`<button class="btn btn-xs btn-blue" onclick="uretimTamamla('${r.id}')">✓ Tamamlandı</button>`
-        }
-        <button class="btn btn-xs btn-red" onclick="silUretim('${r.id}')">Sil</button>
         <span class="sip-ok">▼</span>
       </div>
     </div>
@@ -1855,10 +1854,6 @@ function _tesGrupKartHtml(satisRef,teslimler){
       <div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">
         <button class="btn btn-xs btn-blue" onclick="sipUretimFisGoster('${satisRef}')">Üretim Fişi</button>
         <button class="btn btn-xs btn-green" onclick="sipSatisFisGoster('${satisRef}')">Satış Fişi</button>
-        ${s&&s.teslimatTamam
-          ?`<button class="btn btn-xs btn-green" onclick="teslimatBekleyeneAl('${satisRef}')">↩ Bekleyene Al</button>`
-          :`<button class="btn btn-xs btn-blue" onclick="teslimatTamamla('${satisRef}')">✓ Tamamlandı</button>`
-        }
         <span class="sip-ok">▼</span>
       </div>
     </div>
@@ -1879,8 +1874,6 @@ function _tesGrupKartHtml(satisRef,teslimler){
             </div>
             <div style="display:flex;gap:6px">
               <span style="font-size:12px;font-weight:600;color:var(--green)">₺${fmt(topAl)}</span>
-              <button class="btn btn-xs" onclick="editTeslimat('${r.id}')">Düzenle</button>
-              <button class="btn btn-xs btn-red" onclick="silTeslimat('${r.id}')">Sil</button>
             </div>
           </div>
           <div style="padding:10px 12px">
@@ -2075,27 +2068,27 @@ function cariRaporGoster(musteri){
   const bakiye=topAlacak-topTah;
   document.getElementById('cari-rapor-baslik').textContent='Cari Hesap — '+musteri;
   document.getElementById('cari-rapor-icerik').innerHTML=`
-    <div class="fis">
-      <div class="fis-baslik">CARİ HESAP EKSTRESİ</div>
-      <div class="fis-alt">SUNİ DERİ TAKİP</div>
-      <hr class="fis-sep">
-      <div class="fis-kv"><span class="k">Müşteri    :</span><span class="v">${musteri}</span></div>
-      <div class="fis-kv"><span class="k">Tarih      :</span><span class="v">${new Date().toLocaleDateString('tr-TR')}</span></div>
-      <hr class="fis-sep">
+    <div class="fis-dm">
+      <div class="fis-dm-baslik">CARİ HESAP EKSTRESİ</div>
+      <div class="fis-dm-alt">SUNİ DERİ TAKİP</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-kv"><span class="k">Müşteri    :</span><span class="v">${musteri}</span></div>
+      <div class="fis-dm-kv"><span class="k">Tarih      :</span><span class="v">${new Date().toLocaleDateString('tr-TR')}</span></div>
+      <hr class="fis-dm-sep">
       ${satislar.map(s=>{
         const teslimler=D.teslimat.filter(t=>t.satisRef===s.id);
         const satAlacak=teslimler.reduce((a,t)=>a+(t.topAlacakTL||0),0);
-        return `<div class="fis-kv"><span class="k">${s.tarih} ${s.sipKod||''} :</span><span class="v">₺${fmt(satAlacak)}</span></div>`;
+        return `<div class="fis-dm-kv"><span class="k">${s.tarih} ${s.sipKod||''} :</span><span class="v">₺${fmt(satAlacak)}</span></div>`;
       }).join('')}
-      <hr class="fis-sep">
-      <div class="fis-kv"><span class="k">TOPLAM ALACAK    :</span><span class="v">₺${fmt(topAlacak)}</span></div>
-      <div class="fis-kv"><span class="k">TOPLAM TAHSİLAT  :</span><span class="v">₺${fmt(topTah)}</span></div>
-      <hr class="fis-sep">
-      <div class="fis-toplam"><span>BAKİYE :</span><span>₺${fmt(Math.abs(bakiye))} ${bakiye>1?'ALACAK':bakiye<-1?'FAZLA ÖDEME':'KAPATILDI'}</span></div>
-      <hr class="fis-sep">
-      <div class="fis-footer">
-        <div class="fis-footer-name">Özdemir Saka</div>
-        <div class="fis-footer-app">Saka Application Form</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-kv"><span class="k">TOPLAM ALACAK    :</span><span class="v">₺${fmt(topAlacak)}</span></div>
+      <div class="fis-dm-kv"><span class="k">TOPLAM TAHSİLAT  :</span><span class="v">₺${fmt(topTah)}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-toplam"><span>BAKİYE :</span><span>₺${fmt(Math.abs(bakiye))} ${bakiye>1?'ALACAK':bakiye<-1?'FAZLA ÖDEME':'KAPATILDI'}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-footer">
+        <div class="fis-dm-footer-name">Özdemir Saka</div>
+        <div class="fis-dm-footer-app">Saka Application Form</div>
       </div>
     </div>`;
   document.getElementById('cari-rapor-modal').classList.add('open');
@@ -2287,26 +2280,26 @@ function karRaporGoster(){
   const topPayAlim=(D.payAlim||[]).reduce((s,p)=>s+p.tutar,0);
   const kalan=net-topPayAlim;
   document.getElementById('kar-modal-icerik').innerHTML=`
-    <div class="fis">
-      <div class="fis-baslik">KÂR PAYI RAPORU</div>
-      <div class="fis-alt">SUNİ DERİ TAKİP</div>
-      <hr class="fis-sep">
-      <div class="fis-kv"><span class="k">Rapor Tarihi :</span><span class="v">${new Date().toLocaleDateString('tr-TR')}</span></div>
-      <hr class="fis-sep">
-      <div class="fis-kv"><span class="k">Toplam Satış/Teslim :</span><span class="v">₺${fmt(topSatis)}</span></div>
-      <div class="fis-kv"><span class="k">Toplam Maliyet      :</span><span class="v">₺${fmt(topBorc)}</span></div>
-      <div class="fis-kv"><span class="k">Brüt Kâr            :</span><span class="v">₺${fmt(brutKar)}</span></div>
-      <div class="fis-kv"><span class="k">Benim Payım (%50)   :</span><span class="v">₺${fmt(benimPay)}</span></div>
-      <div class="fis-kv"><span class="k">Gider Payım (%50)   :</span><span class="v">₺${fmt(benimGider)}</span></div>
-      <hr class="fis-sep">
-      <div class="fis-toplam"><span>NET ALACAĞIM :</span><span>₺${fmt(net)}</span></div>
-      <div class="fis-kv" style="margin-top:4px"><span class="k">Alınan Toplam      :</span><span class="v">₺${fmt(topPayAlim)}</span></div>
-      <hr class="fis-sep">
-      <div class="fis-toplam"><span>KALAN ALACAK :</span><span>₺${fmt(kalan)}</span></div>
-      <hr class="fis-sep">
-      <div class="fis-footer">
-        <div class="fis-footer-name">Özdemir Saka</div>
-        <div class="fis-footer-app">Saka Application Form</div>
+    <div class="fis-dm">
+      <div class="fis-dm-baslik">KÂR PAYI RAPORU</div>
+      <div class="fis-dm-alt">SUNİ DERİ TAKİP</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-kv"><span class="k">Rapor Tarihi :</span><span class="v">${new Date().toLocaleDateString('tr-TR')}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-kv"><span class="k">Toplam Satış/Teslim :</span><span class="v">₺${fmt(topSatis)}</span></div>
+      <div class="fis-dm-kv"><span class="k">Toplam Maliyet      :</span><span class="v">₺${fmt(topBorc)}</span></div>
+      <div class="fis-dm-kv"><span class="k">Brüt Kâr            :</span><span class="v">₺${fmt(brutKar)}</span></div>
+      <div class="fis-dm-kv"><span class="k">Benim Payım (%50)   :</span><span class="v">₺${fmt(benimPay)}</span></div>
+      <div class="fis-dm-kv"><span class="k">Gider Payım (%50)   :</span><span class="v">₺${fmt(benimGider)}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-toplam"><span>NET ALACAĞIM :</span><span>₺${fmt(net)}</span></div>
+      <div class="fis-dm-kv" style="margin-top:4px"><span class="k">Alınan Toplam      :</span><span class="v">₺${fmt(topPayAlim)}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-toplam"><span>KALAN ALACAK :</span><span>₺${fmt(kalan)}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-footer">
+        <div class="fis-dm-footer-name">Özdemir Saka</div>
+        <div class="fis-dm-footer-app">Saka Application Form</div>
       </div>
     </div>`;
   document.getElementById('kar-modal').classList.add('open');
@@ -2473,29 +2466,29 @@ function fazlaIade(uretimId,urun,renkKod,miktar,birim,kur,maliyet){
   modal.classList.add('open');
 }
 function iadeFisHtml(iade){
-  return `<div class="fis">
-    <div class="fis-baslik">İADE FİŞİ</div>
-    <div class="fis-alt">SUNİ DERİ TAKİP</div>
-    <hr class="fis-sep">
-    <div class="fis-kv"><span class="k">Tarih      :</span><span class="v">${iade.tarih}</span></div>
-    <div class="fis-kv"><span class="k">Fiş No     :</span><span class="v">${iade.id.slice(-8)}</span></div>
-    <hr class="fis-sep">
-    <div class="fis-kv"><span class="k">Ürün       :</span><span class="v">${iade.urun}${iade.renkKod?' / '+iade.renkKod:''}</span></div>
-    <div class="fis-kv"><span class="k">Miktar     :</span><span class="v">${fmt(iade.miktar)} m</span></div>
-    <div class="fis-kv"><span class="k">Birim      :</span><span class="v">${fmt(iade.birim,4)}</span></div>
-    <div class="fis-kv"><span class="k">Kur        :</span><span class="v">${fmt(iade.kur)} ₺</span></div>
-    ${iade.acik?`<div class="fis-kv"><span class="k">Açıklama   :</span><span class="v">${iade.acik}</span></div>`:''}
-    <hr class="fis-sep">
-    <div class="fis-toplam"><span>BORÇTAN DÜŞÜLEN :</span><span>₺${fmt(iade.maliyet)}</span></div>
-    <hr class="fis-sep">
+  return `<div class="fis-dm">
+    <div class="fis-dm-baslik">İADE FİŞİ</div>
+    <div class="fis-dm-alt">SUNİ DERİ TAKİP</div>
+    <hr class="fis-dm-sep">
+    <div class="fis-dm-kv"><span class="k">Tarih      :</span><span class="v">${iade.tarih}</span></div>
+    <div class="fis-dm-kv"><span class="k">Fiş No     :</span><span class="v">${iade.id.slice(-8)}</span></div>
+    <hr class="fis-dm-sep">
+    <div class="fis-dm-kv"><span class="k">Ürün       :</span><span class="v">${iade.urun}${iade.renkKod?' / '+iade.renkKod:''}</span></div>
+    <div class="fis-dm-kv"><span class="k">Miktar     :</span><span class="v">${fmt(iade.miktar)} m</span></div>
+    <div class="fis-dm-kv"><span class="k">Birim      :</span><span class="v">${fmt(iade.birim,4)}</span></div>
+    <div class="fis-dm-kv"><span class="k">Kur        :</span><span class="v">${fmt(iade.kur)} ₺</span></div>
+    ${iade.acik?`<div class="fis-dm-kv"><span class="k">Açıklama   :</span><span class="v">${iade.acik}</span></div>`:''}
+    <hr class="fis-dm-sep">
+    <div class="fis-dm-toplam"><span>BORÇTAN DÜŞÜLEN :</span><span>₺${fmt(iade.maliyet)}</span></div>
+    <hr class="fis-dm-sep">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;font-size:12px;font-family:'Courier New',monospace">
       <div style="border-top:1px solid #000;padding-top:4px;text-align:center">Teslim Eden (Fabrika)</div>
       <div style="border-top:1px solid #000;padding-top:4px;text-align:center">Teslim Alan</div>
     </div>
-    <hr class="fis-sep">
-    <div class="fis-footer">
-      <div class="fis-footer-name">Özdemir Saka</div>
-      <div class="fis-footer-app">Saka Application Form</div>
+    <hr class="fis-dm-sep">
+    <div class="fis-dm-footer">
+      <div class="fis-dm-footer-name">Özdemir Saka</div>
+      <div class="fis-dm-footer-app">Saka Application Form</div>
     </div>
   </div>`;
 }
