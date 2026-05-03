@@ -878,8 +878,8 @@ function _getSatirDurum(s, ui){
 
 function sipUretimFormAc(sipId,ui){
   // Diğer açık formları temizle
-  document.querySelectorAll('[id^="uf-"+sipId],[id^="sf-"+sipId]').forEach(el=>el.remove());
   document.querySelectorAll('.ure-aktif,.sat-aktif').forEach(el=>el.classList.remove('ure-aktif','sat-aktif'));
+  document.querySelectorAll(`[id^="uf-${sipId}"],[id^="sf-${sipId}"]`).forEach(el=>el.remove());
   const blok=document.getElementById('usatir-'+sipId+'-'+ui);
   if(!blok)return;
   blok.classList.add('ure-aktif');
@@ -1616,6 +1616,8 @@ function _ureKartHtml(r){
         <span class="sip-meta">Borç: <strong style="color:var(--red)">₺${fmt(r.topTL||0)}</strong> &nbsp;·&nbsp; ${r.zaman}</span>
       </div>
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
+        <button class="btn btn-xs btn-blue" onclick="sipUretimFisGoster('${r.satisRef}')">Üretim Fişi</button>
+        <button class="btn btn-xs btn-green" onclick="sipSatisFisGoster('${r.satisRef}')">Satış Fişi</button>
         <button class="btn btn-xs" onclick="editUretim('${r.id}')">Düzenle</button>
         ${r.tamam
           ?`<button class="btn btn-xs btn-green" onclick="uretimBekleyeneAl('${r.id}')">↩ Bekleyene Al</button>`
@@ -1851,6 +1853,8 @@ function _tesGrupKartHtml(satisRef,teslimler){
         <span class="sip-meta">${ds.yuzde}% · ${fmt(ds.topSiparis)} m sipariş · <strong style="color:var(--green)">₺${fmt(topAlacak)}</strong></span>
       </div>
       <div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">
+        <button class="btn btn-xs btn-blue" onclick="sipUretimFisGoster('${satisRef}')">Üretim Fişi</button>
+        <button class="btn btn-xs btn-green" onclick="sipSatisFisGoster('${satisRef}')">Satış Fişi</button>
         ${s&&s.teslimatTamam
           ?`<button class="btn btn-xs btn-green" onclick="teslimatBekleyeneAl('${satisRef}')">↩ Bekleyene Al</button>`
           :`<button class="btn btn-xs btn-blue" onclick="teslimatTamamla('${satisRef}')">✓ Tamamlandı</button>`
