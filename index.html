@@ -1094,14 +1094,18 @@ function sipFormKapat(sipId,ui){
 }
 
 function sipTamamla(sipId){
-  if(!confirm('Sipariş tamamlandı olarak işaretlensin mi? Üretim ve Satış/Teslim sekmelerine kaydedilecek.'))return;
+  if(!confirm('Sipariş tamamlandı olarak işaretlensin mi? Üretim ve Satış/Teslim sekmelerine yansıyacak.'))return;
   const s=D.satis.find(x=>x.id===sipId);if(!s)return;
   s.tamamlandi=true;s.teslimatTamam=true;
   kaydet('satis');
   const ur=D.uretim.find(x=>x.satisRef===sipId);
   if(ur){ur.tamam=true;kaydet('uretim');}
-  renderSatisListe();renderUretimListe();renderTeslimatListe();
+  // Tüm Sheets'e yaz
+  syncToSheets();
+  // Ekranları güncelle
+  renderSatisListe();renderUretimListe();renderTeslimatListe();guncTumRef();
   if(document.getElementById('page-kar').classList.contains('active'))renderKar();
+  if(document.getElementById('page-cari').classList.contains('active'))renderCari();
 }
 
 // ── DOT MATRİX FİŞLER ──
