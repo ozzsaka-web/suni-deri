@@ -196,6 +196,48 @@ tr:hover td{background:#fafbfc}
 .stab:hover:not(.stab-active){color:var(--text2)}
 .stab-badge{display:inline-block;background:var(--acc);color:#fff;border-radius:10px;padding:0 6px;font-size:10px;margin-left:4px;font-weight:700}
 
+/* ── SİPARİŞ İÇİ FORM PANELLERİ ── */
+.urun-satir-blok{background:#fff;border:1px solid var(--border);border-radius:8px;margin:8px 16px;overflow:hidden;transition:border-color .15s}
+.urun-satir-blok.ure-aktif{border-color:#bfdbfe}
+.urun-satir-blok.sat-aktif{border-color:#bbf7d0}
+.urun-satir-blok.satir-tamam{border-color:#d1fae5;background:#f0fdf4;opacity:.8}
+.urun-satir-head{padding:9px 12px;display:flex;align-items:center;gap:8px}
+.u-no{width:22px;height:22px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text2);flex-shrink:0}
+.u-no.done{background:#d1fae5;color:#065f46}
+.u-ad{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.u-meta{font-size:12px;color:var(--text2);margin-top:1px}
+.u-btns{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.urun-form-panel{border-top:1px solid var(--border);padding:12px;background:#f8fafc}
+.urun-form-panel.ure{border-top-color:#bfdbfe;background:#eef5ff}
+.urun-form-panel.sat{border-top-color:#bbf7d0;background:#eefdf5}
+.panel-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.panel-lbl.ure{color:#1d4ed8}.panel-lbl.sat{color:#15803d}
+.ozet-chip{background:#fff;border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--text2);margin-bottom:8px;display:flex;gap:12px;flex-wrap:wrap}
+.urun-tamam-bar{background:#d1fae5;border-top:1px solid #a7f3d0;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#065f46}
+.sip-kart-footer{padding:10px 16px;border-top:1px solid var(--border);background:#fff;display:flex;justify-content:space-between;align-items:center}
+/* ── DOT MATRİX FİŞ ── */
+.fis-dm{font-family:'Courier New',Courier,monospace;font-size:12px;line-height:1.65;color:#000;background:#fff;padding:24px;border-radius:8px;border:1px solid var(--border)}
+.fis-dm-baslik{text-align:center;font-weight:700;font-size:14px;letter-spacing:1px;margin-bottom:1px}
+.fis-dm-alt{text-align:center;font-size:11px;letter-spacing:.5px;color:#555;margin-bottom:3px}
+.fis-dm-sep{border:none;border-top:1px dashed #aaa;margin:7px 0}
+.fis-dm-kv{display:flex;justify-content:space-between;font-size:12px;padding:1px 0}
+.fis-dm-kv .k{color:#666}.fis-dm-kv .v{font-weight:700}
+.fis-dm-thead{font-size:10px;color:#888;padding:4px 0 2px;border-bottom:1px solid #bbb;margin-bottom:2px;display:grid;gap:4px}
+.fis-dm-satir{font-size:12px;padding:2px 0;border-bottom:1px dotted #ddd;display:grid;gap:4px}
+.fis-dm-satir:last-child{border-bottom:none}
+.fis-dm-r{text-align:right}
+.fis-dm-toplam{display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding:4px 0;margin-top:2px}
+.fis-dm-footer{text-align:center;margin-top:10px;line-height:1.7}
+.fis-dm-footer-name{font-size:11px;color:#555;letter-spacing:.5px}
+.fis-dm-footer-app{font-size:10px;color:#999;letter-spacing:.3px}
+.fis-dm-imza{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:24px;font-size:11px;text-align:center}
+.fis-dm-imza div{border-top:1px solid #333;padding-top:4px}
+@media print{
+  .modal-over,.topbar,.sidebar,.u-btns,.bgrp,
+  .sip-kart-head>div:last-child,button{display:none!important}
+  .fis-dm{border:none;padding:0}
+  body,html{background:#fff!important}
+}
 /* ── MISC ── */
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:6px}
 .sh h3{font-size:13px;font-weight:600;color:var(--text)}
@@ -819,43 +861,453 @@ function sipAkordion(el){
   kart.classList.toggle('acik-kart',acik);
 }
 
+// ============================================================
+// SİPARİŞ KARTI İÇİ — SATIR BAZLI ÜRETİM/SATIŞ FORMLARI
+// ============================================================
+function _getSatirDurum(s, ui){
+  const uretim=D.uretim.find(x=>x.satisRef===s.id);
+  const ureSatir=uretim&&uretim.urunler?uretim.urunler[ui]:null;
+  const teslimler=D.teslimat.filter(t=>t.satisRef===s.id);
+  const topTeslim=teslimler.reduce((a,t)=>{
+    const tu=t.urunler&&t.urunler[ui];
+    return a+(tu?tu.teslimMiktar||0:0);
+  },0);
+  const satTamam=topTeslim>0&&topTeslim>=s.urunler[ui].miktar;
+  return {uretim,ureSatir,topTeslim,satTamam,ureTamam:!!ureSatir};
+}
+
+function sipUretimFormAc(sipId,ui){
+  // Diğer açık formları temizle
+  document.querySelectorAll('[id^="uf-"+sipId],[id^="sf-"+sipId]').forEach(el=>el.remove());
+  document.querySelectorAll('.ure-aktif,.sat-aktif').forEach(el=>el.classList.remove('ure-aktif','sat-aktif'));
+  const blok=document.getElementById('usatir-'+sipId+'-'+ui);
+  if(!blok)return;
+  blok.classList.add('ure-aktif');
+  const s=D.satis.find(x=>x.id===sipId);
+  if(!s)return;
+  const u=s.urunler[ui];
+  const uretim=D.uretim.find(x=>x.satisRef===sipId);
+  const mv=uretim&&uretim.urunler?uretim.urunler[ui]:null;
+  // Mevcut panel varsa kaldır
+  const eskiPanel=document.getElementById('uf-'+sipId+'-'+ui);
+  if(eskiPanel)eskiPanel.remove();
+  const panel=document.createElement('div');
+  panel.id='uf-'+sipId+'-'+ui;
+  panel.className='urun-form-panel ure';
+  panel.innerHTML=`
+    <div class="panel-lbl ure">
+      <span>Üretim Bilgileri</span>
+      <span style="font-weight:400;color:var(--text3);text-transform:none;font-size:11px">${u.urun}${u.renkKod?' / '+u.renkKod:''} &nbsp;·&nbsp; Sipariş: ${fmt(u.miktar)} m</span>
+    </div>
+    <div class="grid g3" style="gap:8px;margin-bottom:8px">
+      <div class="fg"><label class="lbl">Fabrika</label>
+        <input type="text" id="uf-fab-${sipId}-${ui}" value="${mv&&uretim?uretim.fabrika:''}" placeholder="FABRİKA ADI">
+      </div>
+      <div class="fg"><label class="lbl">Döviz</label>
+        <select id="uf-dov-${sipId}-${ui}" onchange="sipUreHesapla('${sipId}',${ui})">
+          <option value="USD" ${s.dovTur==='USD'?'selected':''}>USD</option>
+          <option value="EUR" ${s.dovTur==='EUR'?'selected':''}>EUR</option>
+        </select>
+      </div>
+      <div class="fg"><label class="lbl">Kur (₺) <span style="font-size:10px;color:var(--acc);cursor:pointer;text-transform:none" onclick="sipKurAl('${sipId}',${ui},'ure')">← Güncel al</span></label>
+        <input type="number" id="uf-kur-${sipId}-${ui}" value="${mv?mv.kur:''}" placeholder="0.00" step="0.01" oninput="sipUreHesapla('${sipId}',${ui})">
+      </div>
+    </div>
+    <div class="grid g4" style="gap:8px;margin-bottom:8px">
+      <div class="fg"><label class="lbl">Üretim (m)</label>
+        <input type="number" id="uf-miktar-${sipId}-${ui}" value="${mv?mv.uretimMiktar:u.miktar}" step="0.01" oninput="sipUreHesapla('${sipId}',${ui})">
+      </div>
+      <div class="fg"><label class="lbl">Alış Birim (${s.dovTur})</label>
+        <input type="number" id="uf-birim-${sipId}-${ui}" value="${mv?mv.alisbirim:''}" placeholder="0.0000" step="0.0001" oninput="sipUreHesapla('${sipId}',${ui})">
+      </div>
+      <div class="fg"><label class="lbl">Toplam Döviz</label>
+        <input type="number" id="uf-topDov-${sipId}-${ui}" class="auto" readonly>
+      </div>
+      <div class="fg"><label class="lbl">Toplam TL</label>
+        <input type="number" id="uf-topTL-${sipId}-${ui}" class="auto" readonly style="color:var(--red);font-weight:600">
+      </div>
+    </div>
+    <div id="uf-ozet-${sipId}-${ui}" class="ozet-chip" style="display:none"></div>
+    <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px">
+      <button class="btn btn-sm" onclick="sipFormKapat('${sipId}',${ui})">İptal</button>
+      <button class="btn btn-sm btn-primary" onclick="sipUretimKaydet('${sipId}',${ui})">Üretimi Kaydet</button>
+    </div>`;
+  blok.appendChild(panel);
+  sipUreHesapla(sipId,ui);
+}
+
+function sipKurAl(sipId,ui,tip){
+  const s=D.satis.find(x=>x.id===sipId);
+  if(!s)return;
+  const dovEl=document.getElementById((tip==='ure'?'uf':'sf')+'-dov-'+sipId+'-'+ui);
+  const dov=dovEl?dovEl.value:s.dovTur;
+  const kur=localStorage.getItem('son_'+(dov==='EUR'?'eur':'usd')+'_kur')||'';
+  if(!kur)return;
+  const kurEl=document.getElementById((tip==='ure'?'uf':'sf')+'-kur-'+sipId+'-'+ui);
+  if(kurEl){kurEl.value=kur;kurEl.dispatchEvent(new Event('input'));}
+}
+
+function sipUreHesapla(sipId,ui){
+  const s=D.satis.find(x=>x.id===sipId);if(!s)return;
+  const m=+document.getElementById('uf-miktar-'+sipId+'-'+ui)?.value||0;
+  const b=+document.getElementById('uf-birim-'+sipId+'-'+ui)?.value||0;
+  const k=+document.getElementById('uf-kur-'+sipId+'-'+ui)?.value||0;
+  const topDov=+(b*m).toFixed(2);
+  const topTL=+(b*m*k).toFixed(2);
+  const tdEl=document.getElementById('uf-topDov-'+sipId+'-'+ui);
+  const ttEl=document.getElementById('uf-topTL-'+sipId+'-'+ui);
+  if(tdEl)tdEl.value=topDov;
+  if(ttEl)ttEl.value=topTL;
+  const ozetEl=document.getElementById('uf-ozet-'+sipId+'-'+ui);
+  if(ozetEl&&m>0&&b>0){
+    const sipM=s.urunler[ui].miktar;
+    const fark=m-sipM;
+    const fc=fark>0?'var(--amber)':fark<0?'var(--red)':'var(--green)';
+    ozetEl.style.display='flex';
+    ozetEl.innerHTML=`<span>Sipariş: <strong>${fmt(sipM)} m</strong></span>
+      <span>Üretim: <strong>${fmt(m)} m</strong></span>
+      <span style="color:${fc}">Fark: <strong>${fark>=0?'+':''}${fmt(fark)} m</strong></span>
+      <span>Borç: <strong style="color:var(--red)">₺${fmt(topTL)}</strong></span>`;
+  }
+}
+
+function sipUretimKaydet(sipId,ui){
+  const s=D.satis.find(x=>x.id===sipId);if(!s)return;
+  const fab=(document.getElementById('uf-fab-'+sipId+'-'+ui)?.value||'').trim();
+  const dov=document.getElementById('uf-dov-'+sipId+'-'+ui)?.value||s.dovTur;
+  const kur=+document.getElementById('uf-kur-'+sipId+'-'+ui)?.value||0;
+  const m=+document.getElementById('uf-miktar-'+sipId+'-'+ui)?.value||0;
+  const b=+document.getElementById('uf-birim-'+sipId+'-'+ui)?.value||0;
+  if(!fab){alert('Fabrika adı giriniz!');return}
+  if(!m||!b||!kur){alert('Miktar, alış birim ve kur zorunlu!');return}
+  const u=s.urunler[ui];
+  const ad=+(b*m).toFixed(2);
+  const tl=+(b*m*kur).toFixed(2);
+  let uretim=D.uretim.find(x=>x.satisRef===sipId);
+  if(!uretim){
+    uretim={id:uid('U'),satisRef:sipId,musteri:s.musteri,fabrika:fab,
+      dovTur:dov,urunler:s.urunler.map(()=>null),topDov:0,topTL:0,
+      zaman:new Date().toLocaleString('tr-TR')};
+    D.uretim.push(uretim);
+  }
+  uretim.fabrika=fab;
+  uretim.urunler[ui]={urun:u.urun,renkKod:u.renkKod,sipMiktar:u.miktar,
+    uretimMiktar:m,alisbirim:b,kur,alisDov:ad,alisTL:tl,dovTur:dov};
+  uretim.topDov=+uretim.urunler.filter(Boolean).reduce((a,x)=>a+(x.alisDov||0),0).toFixed(2);
+  uretim.topTL=+uretim.urunler.filter(Boolean).reduce((a,x)=>a+(x.alisTL||0),0).toFixed(2);
+  kaydet('uretim');guncUretimRef();renderSatisListe();
+}
+
+function sipSatisFormAc(sipId,ui){
+  document.querySelectorAll('.ure-aktif,.sat-aktif').forEach(el=>el.classList.remove('ure-aktif','sat-aktif'));
+  const blok=document.getElementById('usatir-'+sipId+'-'+ui);
+  if(!blok)return;
+  blok.classList.add('sat-aktif');
+  const s=D.satis.find(x=>x.id===sipId);if(!s)return;
+  const u=s.urunler[ui];
+  const teslimler=D.teslimat.filter(t=>t.satisRef===sipId);
+  const topOnceki=teslimler.reduce((a,t)=>{
+    const tu=t.urunler&&t.urunler[ui];return a+(tu?tu.teslimMiktar||0:0);
+  },0);
+  const kalan=Math.max(0,u.miktar-topOnceki);
+  const eskiPanel=document.getElementById('sf-'+sipId+'-'+ui);
+  if(eskiPanel)eskiPanel.remove();
+  const panel=document.createElement('div');
+  panel.id='sf-'+sipId+'-'+ui;
+  panel.className='urun-form-panel sat';
+  panel.innerHTML=`
+    <div class="panel-lbl sat">
+      <span>Satış / Teslim Bilgileri</span>
+      <span style="font-weight:400;color:var(--text3);text-transform:none;font-size:11px">${u.urun}${u.renkKod?' / '+u.renkKod:''}</span>
+    </div>
+    <div class="ozet-chip">
+      <span>Sipariş: <strong>${fmt(u.miktar)} m</strong></span>
+      <span>Önceki teslim: <strong>${fmt(topOnceki)} m</strong></span>
+      <span>Kalan: <strong style="color:var(--green)">${fmt(kalan)} m</strong></span>
+    </div>
+    <div class="grid g3" style="gap:8px;margin-bottom:8px">
+      <div class="fg"><label class="lbl">Teslim Tarihi</label>
+        <input type="date" id="sf-tarih-${sipId}-${ui}" value="${bugun()}">
+      </div>
+      <div class="fg"><label class="lbl">Bu Teslim (m)</label>
+        <input type="number" id="sf-miktar-${sipId}-${ui}" value="${kalan}" step="0.01" oninput="sipSatHesapla('${sipId}',${ui})">
+      </div>
+      <div class="fg"><label class="lbl">Kur (₺/${s.dovTur}) <span style="font-size:10px;color:var(--acc);cursor:pointer;text-transform:none" onclick="sipKurAl('${sipId}',${ui},'sat')">← Güncel al</span></label>
+        <input type="number" id="sf-kur-${sipId}-${ui}" placeholder="0.00" step="0.01" oninput="sipSatHesapla('${sipId}',${ui})">
+      </div>
+    </div>
+    <div class="grid g2" style="gap:8px;margin-bottom:8px">
+      <div class="fg"><label class="lbl">Satış Birim (${s.dovTur}) — otomatik</label>
+        <input type="number" class="auto" value="${fmt(u.birim,4)}" readonly>
+      </div>
+      <div class="fg"><label class="lbl">Müşteri Alacağı (TL)</label>
+        <input type="number" id="sf-alacak-${sipId}-${ui}" class="auto" readonly style="color:var(--green);font-weight:700">
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px">
+      <button class="btn btn-sm" onclick="sipFormKapat('${sipId}',${ui})">İptal</button>
+      <button class="btn btn-sm btn-green" onclick="sipSatisKaydet('${sipId}',${ui})">Satışı Kaydet — Satırı Kapat</button>
+    </div>`;
+  blok.appendChild(panel);
+}
+
+function sipSatHesapla(sipId,ui){
+  const s=D.satis.find(x=>x.id===sipId);if(!s)return;
+  const u=s.urunler[ui];
+  const m=+document.getElementById('sf-miktar-'+sipId+'-'+ui)?.value||0;
+  const k=+document.getElementById('sf-kur-'+sipId+'-'+ui)?.value||0;
+  const alacak=+(u.birim*m*k).toFixed(2);
+  const el=document.getElementById('sf-alacak-'+sipId+'-'+ui);
+  if(el)el.value=alacak;
+}
+
+function sipSatisKaydet(sipId,ui){
+  const s=D.satis.find(x=>x.id===sipId);if(!s)return;
+  const u=s.urunler[ui];
+  const tTarih=document.getElementById('sf-tarih-'+sipId+'-'+ui)?.value;
+  const m=+document.getElementById('sf-miktar-'+sipId+'-'+ui)?.value||0;
+  const kur=+document.getElementById('sf-kur-'+sipId+'-'+ui)?.value||0;
+  if(!tTarih){alert('Teslim tarihi giriniz!');return}
+  if(!m||!kur){alert('Miktar ve kur zorunlu!');return}
+  const alacakTL=+(u.birim*m*kur).toFixed(2);
+  let gun=null;
+  if(s.tarih&&tTarih)gun=Math.round((new Date(tTarih)-new Date(s.tarih))/864e5);
+  // Her satır için ayrı teslimat kaydı — tüm ürün listesi ile (diğerleri 0)
+  const teslimUrunler=s.urunler.map((uu,i)=>i===ui
+    ?{urun:uu.urun,renkKod:uu.renkKod,sipMiktar:uu.miktar,teslimMiktar:m,
+      fark:+(m-uu.miktar).toFixed(2),satisbirim:uu.birim,kur,alacakTL}
+    :{urun:uu.urun,renkKod:uu.renkKod,sipMiktar:uu.miktar,teslimMiktar:0,
+      fark:0,satisbirim:uu.birim,kur:0,alacakTL:0});
+  D.teslimat.push({id:uid('T'),satisRef:sipId,musteri:s.musteri,
+    sipTarih:s.tarih,teslimTarih:tTarih,gun,dovTur:s.dovTur,
+    urunler:teslimUrunler,topAlacakTL:alacakTL,
+    durum:'Teslim Edildi',zaman:new Date().toLocaleString('tr-TR')});
+  kaydet('teslimat');guncTeslimatRef();renderSatisListe();
+}
+
+function sipFormKapat(sipId,ui){
+  const pnl=document.getElementById('uf-'+sipId+'-'+ui);
+  const pns=document.getElementById('sf-'+sipId+'-'+ui);
+  if(pnl)pnl.remove();if(pns)pns.remove();
+  const blok=document.getElementById('usatir-'+sipId+'-'+ui);
+  if(blok)blok.classList.remove('ure-aktif','sat-aktif');
+}
+
+function sipTamamla(sipId){
+  if(!confirm('Sipariş tamamlandı olarak işaretlensin mi? Üretim ve Satış/Teslim sekmelerine kaydedilecek.'))return;
+  const s=D.satis.find(x=>x.id===sipId);if(!s)return;
+  s.tamamlandi=true;s.teslimatTamam=true;
+  kaydet('satis');
+  const ur=D.uretim.find(x=>x.satisRef===sipId);
+  if(ur){ur.tamam=true;kaydet('uretim');}
+  renderSatisListe();renderUretimListe();renderTeslimatListe();
+  if(document.getElementById('page-kar').classList.contains('active'))renderKar();
+}
+
+// ── DOT MATRİX FİŞLER ──
+function sipUretimFisGoster(sipId){
+  const s=D.satis.find(x=>x.id===sipId);if(!s)return;
+  const ur=D.uretim.find(x=>x.satisRef===sipId);
+  document.getElementById('fis-modal-baslik').textContent='Üretim Fişi — '+(s.sipKod||'');
+  const satirlar=s.urunler.map((u,i)=>{
+    const ud=ur&&ur.urunler?ur.urunler[i]:null;
+    return `<div class="fis-dm-satir" style="grid-template-columns:1.8fr .7fr .7fr 1fr 1.2fr">
+      <span>${u.urun}${u.renkKod?' / '+u.renkKod:''}</span>
+      <span class="fis-dm-r">${fmt(u.miktar)}</span>
+      <span class="fis-dm-r">${ud?fmt(ud.uretimMiktar):'-'}</span>
+      <span class="fis-dm-r">${ud?(ud.dovTur||s.dovTur)+' '+fmt(ud.kur||0):'-'}</span>
+      <span class="fis-dm-r">${ud?'₺'+fmt(ud.alisTL||0):'-'}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('fis-icerik').innerHTML=`
+    <div class="fis-dm">
+      <div class="fis-dm-baslik">SUNİ DERİ TAKİP</div>
+      <div class="fis-dm-alt">ÜRETİM FİŞİ</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-kv"><span class="k">Sipariş Kodu :</span><span class="v">${s.sipKod||s.id.slice(-6)}</span></div>
+      <div class="fis-dm-kv"><span class="k">Müşteri      :</span><span class="v">${s.musteri}</span></div>
+      <div class="fis-dm-kv"><span class="k">Fabrika      :</span><span class="v">${ur?ur.fabrika:'DERİSAN TİCARET'}</span></div>
+      <div class="fis-dm-kv"><span class="k">Sipariş Tar. :</span><span class="v">${s.tarih}</span></div>
+      <div class="fis-dm-kv"><span class="k">Fiş Tarihi   :</span><span class="v">${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-thead" style="grid-template-columns:1.8fr .7fr .7fr 1fr 1.2fr">
+        <span>ÜRÜN / RENK</span>
+        <span class="fis-dm-r">SİP.M</span>
+        <span class="fis-dm-r">ÜR.M</span>
+        <span class="fis-dm-r">KUR</span>
+        <span class="fis-dm-r">TOPLAM TL</span>
+      </div>
+      ${satirlar}
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-toplam">
+        <span style="color:#666;font-weight:400">TOPLAM ÜRETİM BORCU :</span>
+        <span>${ur?'₺'+fmt(ur.topTL):'-'}</span>
+      </div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-imza">
+        <div>Teslim Eden (Fabrika)</div>
+        <div>Teslim Alan</div>
+      </div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-footer">
+        <div class="fis-dm-footer-name">Özdemir Saka</div>
+        <div class="fis-dm-footer-app">Saka Application Form</div>
+      </div>
+    </div>`;
+  document.getElementById('fis-modal').classList.add('open');
+}
+
+function sipSatisFisGoster(sipId){
+  const s=D.satis.find(x=>x.id===sipId);if(!s)return;
+  const teslimler=D.teslimat.filter(t=>t.satisRef===sipId);
+  // Her ürün satırı için toplam teslim ve alacak
+  document.getElementById('fis-modal-baslik').textContent='Satış/Teslim Fişi — '+(s.sipKod||'');
+  const satirlar=s.urunler.map((u,i)=>{
+    const topTeslim=teslimler.reduce((a,t)=>{
+      const tu=t.urunler&&t.urunler[i];return a+(tu?tu.teslimMiktar||0:0);
+    },0);
+    const topAlacak=teslimler.reduce((a,t)=>{
+      const tu=t.urunler&&t.urunler[i];return a+(tu?tu.alacakTL||0:0);
+    },0);
+    // Son teslim tarihi ve kuru al
+    const sonT=teslimler.filter(t=>t.urunler&&t.urunler[i]&&t.urunler[i].teslimMiktar>0).slice(-1)[0];
+    const tTarih=sonT?sonT.teslimTarih:'-';
+    const kur=sonT&&sonT.urunler[i]?sonT.urunler[i].kur||0:0;
+    return `<div class="fis-dm-satir" style="grid-template-columns:1.8fr .9fr .7fr .8fr 1.2fr">
+      <span>${u.urun}${u.renkKod?' / '+u.renkKod:''}</span>
+      <span class="fis-dm-r">${tTarih!=='-'?tTarih.slice(5).split('-').reverse().join('.')+'.'+tTarih.slice(2,4):'-'}</span>
+      <span class="fis-dm-r">${fmt(topTeslim)} m</span>
+      <span class="fis-dm-r">${s.dovTur} ${fmt(kur)}</span>
+      <span class="fis-dm-r">${topAlacak>0?'₺'+fmt(topAlacak):'-'}</span>
+    </div>`;
+  }).join('');
+  const topAlacakGenel=teslimler.reduce((a,t)=>a+(t.topAlacakTL||0),0);
+  document.getElementById('fis-icerik').innerHTML=`
+    <div class="fis-dm">
+      <div class="fis-dm-baslik">SUNİ DERİ TAKİP</div>
+      <div class="fis-dm-alt">SATIŞ / TESLİM FİŞİ</div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-kv"><span class="k">Sipariş Kodu :</span><span class="v">${s.sipKod||s.id.slice(-6)}</span></div>
+      <div class="fis-dm-kv"><span class="k">Müşteri      :</span><span class="v">${s.musteri}</span></div>
+      <div class="fis-dm-kv"><span class="k">Sipariş Tar. :</span><span class="v">${s.tarih}</span></div>
+      <div class="fis-dm-kv"><span class="k">Fiş Tarihi   :</span><span class="v">${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span></div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-thead" style="grid-template-columns:1.8fr .9fr .7fr .8fr 1.2fr">
+        <span>ÜRÜN / RENK</span>
+        <span class="fis-dm-r">TESLİM T.</span>
+        <span class="fis-dm-r">MİKTAR</span>
+        <span class="fis-dm-r">KUR</span>
+        <span class="fis-dm-r">ALACAK TL</span>
+      </div>
+      ${satirlar}
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-toplam">
+        <span style="color:#666;font-weight:400">TOPLAM ALACAK :</span>
+        <span>${topAlacakGenel>0?'₺'+fmt(topAlacakGenel):'-'}</span>
+      </div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-imza">
+        <div>Teslim Eden</div>
+        <div>Teslim Alan</div>
+      </div>
+      <hr class="fis-dm-sep">
+      <div class="fis-dm-footer">
+        <div class="fis-dm-footer-name">Özdemir Saka</div>
+        <div class="fis-dm-footer-app">Saka Application Form</div>
+      </div>
+    </div>`;
+  document.getElementById('fis-modal').classList.add('open');
+}
+
 function _sipKartHtml(s){
   const uretim=D.uretim.find(u=>u.satisRef===s.id);
   const topDovTxt=fmt(s.topDov)+' '+s.dovTur;
-  const uretimBadge=uretim
-    ?`<span class="badge b-teslim">${uretim.fabrika}</span>`
-    :`<span class="badge b-bekl">Üretim yok</span>`;
+  // Tüm satırların durumunu hesapla
+  let tamSayisi=0;
+  s.urunler.forEach((u,ui)=>{
+    const teslimler=D.teslimat.filter(t=>t.satisRef===s.id);
+    const topT=teslimler.reduce((a,t)=>{const tu=t.urunler&&t.urunler[ui];return a+(tu?tu.teslimMiktar||0:0);},0);
+    const ureSatir=uretim&&uretim.urunler?uretim.urunler[ui]:null;
+    if(ureSatir&&topT>=u.miktar)tamSayisi++;
+  });
+  const hepsiBitti=tamSayisi===s.urunler.length&&s.urunler.length>0;
+  const ureGirildi=uretim&&uretim.urunler?uretim.urunler.filter(Boolean).length:0;
+  const durumBadge=hepsiBitti
+    ?`<span class="badge b-tam">✓ Tamamlandı</span>`
+    :ureGirildi>0
+      ?`<span class="badge b-kismi">${ureGirildi}/${s.urunler.length} üretim girildi</span>`
+      :`<span class="badge b-bekl">Üretim bekliyor</span>`;
+  const satirHtml=s.urunler.map((u,ui)=>{
+    const ureSatir=uretim&&uretim.urunler?uretim.urunler[ui]:null;
+    const teslimler=D.teslimat.filter(t=>t.satisRef===s.id);
+    const topTeslim=teslimler.reduce((a,t)=>{const tu=t.urunler&&t.urunler[ui];return a+(tu?tu.teslimMiktar||0:0);},0);
+    const topAlacak=teslimler.reduce((a,t)=>{const tu=t.urunler&&t.urunler[ui];return a+(tu?tu.alacakTL||0:0);},0);
+    const satTamam=topTeslim>0&&topTeslim>=u.miktar;
+    const ureTamam=!!ureSatir;
+    const satirTamam=ureTamam&&satTamam;
+    return `<div id="usatir-${s.id}-${ui}" class="urun-satir-blok${satirTamam?' satir-tamam':''}">
+      <div class="urun-satir-head">
+        <div class="${satirTamam?'u-no done':'u-no'}">${ui+1}</div>
+        <div style="flex:1">
+          <div class="u-ad">${u.urun}${u.renkKod?` <span style="color:var(--text2);font-weight:400">/ ${u.renkKod}</span>`:''}</div>
+          <div class="u-meta">
+            ${fmt(u.miktar)} m &nbsp;·&nbsp; ${fmt(u.birim,4)} ${s.dovTur}/m
+            ${ureSatir?` &nbsp;·&nbsp; <span style="color:var(--red)">Borç: ₺${fmt(ureSatir.alisTL||0)}</span>`:''}
+            ${topTeslim>0?` &nbsp;·&nbsp; <span style="color:var(--green)">Teslim: ${fmt(topTeslim)} m</span>`:''}
+          </div>
+        </div>
+        <div class="u-btns">
+          ${satirTamam
+            ?`<span class="badge b-tam">✓ Tamamlandı</span>`
+            :`<button class="btn btn-xs btn-blue" onclick="sipUretimFormAc('${s.id}',${ui})">
+                ${ureTamam?'Üretim Düzenle':'+ Üretim Gir'}
+              </button>
+              <button class="btn btn-xs ${ureTamam?'btn-green':''}"
+                ${!ureTamam?'disabled style="opacity:.35;cursor:not-allowed"':''}
+                onclick="${ureTamam?`sipSatisFormAc('${s.id}',${ui})`:''}">
+                + Satış/Teslim
+              </button>`
+          }
+        </div>
+      </div>
+      ${satirTamam?`<div class="urun-tamam-bar">
+        <span>Üretim: ${fmt(ureSatir.uretimMiktar)} m &nbsp;·&nbsp; Borç: ₺${fmt(ureSatir.alisTL||0)}</span>
+        <span>Teslim: ${fmt(topTeslim)} m &nbsp;·&nbsp; Alacak: ₺${fmt(topAlacak)}</span>
+      </div>`:''}
+    </div>`;
+  }).join('');
   return `<div class="sip-kart">
     <div class="sip-kart-head" onclick="sipAkordion(this)">
       <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;flex-wrap:wrap">
         <span style="font-size:12px;font-weight:500;color:var(--text2)">${s.tarih}</span>
         <span style="font-size:14px;font-weight:600;color:var(--text)">${s.musteri}</span>
         ${s.sipKod?`<span class="sip-kod-pill">${s.sipKod}</span>`:''}
-        ${uretimBadge}
+        ${durumBadge}
         <span class="sip-meta">${s.urunler.length} ürün &nbsp;·&nbsp; <strong>${topDovTxt}</strong></span>
       </div>
       <div style="display:flex;align-items:center;gap:6px" onclick="event.stopPropagation()">
-        <button class="btn btn-xs btn-blue" onclick="fisMusteriGoster('${s.id}')">Müşteri Fişi</button>
-        <button class="btn btn-xs" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
+        <button class="btn btn-xs btn-blue" onclick="sipUretimFisGoster('${s.id}')">Üretim Fişi</button>
+        <button class="btn btn-xs btn-green" onclick="sipSatisFisGoster('${s.id}')">Satış Fişi</button>
         <button class="btn btn-xs" onclick="editSatis('${s.id}')">Düzenle</button>
         <button class="btn btn-xs btn-red" onclick="silSatis('${s.id}')">Sil</button>
         <span class="sip-ok">▼</span>
       </div>
     </div>
     <div class="sip-kart-body">
-      <div class="tbl-wrap" style="margin:12px 16px">
-        <table><thead><tr><th>Ürün</th><th>Renk/Kod</th><th>Miktar (m)</th><th>Birim Fiyat</th><th>Toplam Döviz</th></tr></thead>
-        <tbody>
-          ${s.urunler.map(u=>`<tr>
-            <td>${u.urun}</td><td>${u.renkKod||'-'}</td><td>${fmt(u.miktar)}</td>
-            <td>${fmt(u.birim,4)} ${s.dovTur}</td>
-            <td style="font-weight:600;color:var(--blue)">${fmt(u.topDov)} ${s.dovTur}</td>
-          </tr>`).join('')}
-        </tbody></table>
-      </div>
-      <div style="padding:0 16px 12px;font-size:12px;color:var(--text2)">
-        Toplam: <strong style="color:var(--blue)">${fmt(s.topDov)} ${s.dovTur}</strong> &nbsp;·&nbsp;
-        Üretim: ${uretim?`<span class="badge b-teslim">${uretim.fabrika}</span>`:`<span class="badge b-bekl">Girilmedi</span>`}
+      ${satirHtml}
+      <div class="sip-kart-footer">
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-xs" onclick="fisMusteriGoster('${s.id}')">Müşteri Fişi</button>
+          <button class="btn btn-xs" onclick="fisFabrikaGoster('${s.id}')">Fabrika Fişi</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${!hepsiBitti?`<span style="font-size:12px;color:var(--text3)">${tamSayisi}/${s.urunler.length} satır tamamlandı</span>`:''}
+          <button class="btn btn-sm${hepsiBitti?' btn-green':''}"
+            ${!hepsiBitti?'disabled style="opacity:.4;cursor:not-allowed"':''}
+            onclick="${hepsiBitti?`sipTamamla('${s.id}')`:''}" >
+            ${hepsiBitti?'✓ Siparişi Tamamla':'Siparişi Tamamla'}
+          </button>
+        </div>
       </div>
     </div>
   </div>`;
